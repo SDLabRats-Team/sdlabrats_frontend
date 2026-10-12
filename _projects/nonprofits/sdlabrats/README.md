@@ -79,14 +79,18 @@ staff create them, so there is no public sign-up.
   home: `/admin/` for Admins, `/account/` for everyone else (`js/labrats-signin.js`).
 - `/account/`: a student's open assignments with a turn-in form each, plus feedback once
   reviewed (`js/labrats-account.js`).
-- `/admin/`: Admin-only sign-in, then tabs for accounts (create, change role, reset password,
-  delete), website form submissions (filter, mark handled), and assignments (post, open or
+- `/admin/`: Admin-only sign-in, then tabs for accounts (create, change role, switch sign-in
+  on or off, reset password, delete), website form submissions (filter, mark handled), and assignments (post, open or
   close, read turn-ins, leave feedback) (`js/labrats-admin.js`).
 
 Shared pieces: `js/labrats-api.js` (backend calls through `assets/js/api/config.js`),
 `js/labrats-auth.js` (session), `js/labrats-dom.js` (builds user content as text, never HTML),
 `js/labrats-session-rules.js` (pure helpers, tested in `tests/test_sdlabrats_session_rules.mjs`).
 The backend enforces every permission again; the pages only decide what to show.
+
+The backend follows upstream Flask's account activation: an inactive account's password is
+accepted, but `/api/id` answers 403, and the sign-in form says the account is waiting for staff.
+Accounts created in the admin console start active.
 
 The header's "Sign in" link becomes "My assignments" or "Admin console" once someone signs in.
 A `labrats-signed-in` flag in localStorage records that this browser has signed in, so pages only

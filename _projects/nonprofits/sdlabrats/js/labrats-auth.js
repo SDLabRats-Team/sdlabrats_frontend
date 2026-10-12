@@ -9,16 +9,22 @@ import { readStorage, writeStorage, removeStorage } from "./labrats-storage.js";
 // when someone might be. Visitors who never sign in make no sign-in requests.
 const SIGNED_IN_KEY = "labrats-signed-in";
 
-// The signed-in user ({ uid, name, role, ... }) or null when nobody is signed in.
-export async function getCurrentUser() {
-  const { ok, data } = await apiRequest("/api/id");
+// Who holds the sign-in cookie: { user } when signed in, { inactive: true } when the password
+// was right but the account still needs an admin to activate it (upstream Flask answers 403).
+async function readSession() {
+  const { ok, status, data } = await apiRequest("/api/id");
   const user = ok && data ? data : null;
   if (user) {
     writeStorage(SIGNED_IN_KEY, "1");
   } else {
     removeStorage(SIGNED_IN_KEY);
   }
-  return user;
+  return { user, inactive: status === 403 };
+}
+
+// The signed-in user ({ uid, name, role, ... }) or null when nobody is signed in.
+export async function getCurrentUser() {
+  return (await readSession()).user;
 }
 
 export async function signOut() {
@@ -39,6 +45,11 @@ export async function initSessionLink() {
     // Backend unreachable: the link keeps pointing at the sign-in page.
     if (!(error instanceof BackendUnavailableError)) throw error;
   }
+}
+
+// The LabRats phone number printed into the sign-in form (signin-form.html).
+function phoneFor(form) {
+  return form.querySelector("[data-labrats-phone]")?.dataset.labratsPhone || "LabRats";
 }
 
 function setStatus(form, state, message) {
@@ -70,7 +81,11 @@ export function initSignInForm(form, { requiredRole = form.dataset.requiredRole 
         setStatus(form, "error", status === 401 ? "That username and password don't match." : "Sign-in failed. Please try again.");
         return;
       }
-      const user = await getCurrentUser();
+      const { user, inactive } = await readSession();
+      if (inactive) {
+        setStatus(form, "error", `This account isn't active yet. LabRats staff need to switch it on; call ${phoneFor(form)} if you're waiting.`);
+        return;
+      }
       if (!user) {
         setStatus(form, "error", "Signed in, but this browser blocked the sign-in cookie. Allow cookies for this site and try again.");
         return;
@@ -88,8 +103,7 @@ export function initSignInForm(form, { requiredRole = form.dataset.requiredRole 
       }
     } catch (error) {
       if (!(error instanceof BackendUnavailableError)) throw error;
-      const phone = form.querySelector("[data-labrats-phone]")?.dataset.labratsPhone || "";
-      setStatus(form, "error", `We couldn't reach the sign-in server. Please try again later or call ${phone}.`.trim());
+      setStatus(form, "error", `We couldn't reach the sign-in server. Please try again later or call ${phoneFor(form)}.`);
     } finally {
       button.disabled = false;
       button.removeAttribute("aria-busy");

@@ -4,7 +4,7 @@ import { apiRequest, BackendUnavailableError } from "./labrats-api.js";
 import { getCurrentUser, initSignInForm, initSignOutButtons } from "./labrats-auth.js";
 import { showErrors, setStatus, focusFirstError } from "./labrats-forms.js";
 import { formatDate, formatDateTime, summarizeDetails } from "./labrats-session-rules.js";
-import { el, table, emptyState } from "./labrats-dom.js";
+import { el, table, emptyState, toggleSwitch } from "./labrats-dom.js";
 
 const root = document.querySelector("[data-labrats-admin]");
 const consoleView = root.querySelector("[data-labrats-console]");
@@ -76,6 +76,26 @@ function roleSelect(user) {
   return select;
 }
 
+// Upstream Flask refuses inactive accounts at sign-in. Accounts made here start active; accounts
+// made elsewhere (such as OCS mentor sign-ups) wait for an admin to switch them on.
+function activeToggle(user) {
+  const toggle = toggleSwitch("Active", {
+    checked: user.active, disabled: user.uid === currentUser.uid, name: `${user.name} can sign in`,
+  });
+  const input = toggle.firstChild;
+  input.addEventListener("change", async () => {
+    const result = await call(`/api/labrats/users/${encodeURIComponent(user.uid)}`, { method: "PUT", body: { active: input.checked } }, "Account not updated");
+    if (result?.ok) {
+      user.active = result.data.active;
+      announce(`${user.name} ${user.active ? "can sign in now" : "can no longer sign in"}.`);
+    } else {
+      if (result?.status === 400) announce(Object.values(result.data.errors).join(" "));
+      input.checked = user.active;
+    }
+  });
+  return toggle;
+}
+
 function resetPassword(user) {
   const input = el("input", {
     class: "ocs__input labrats__compact-input", type: "password", autocomplete: "new-password",
@@ -119,9 +139,10 @@ async function loadUsers() {
   const result = await call(`/api/labrats/users${query ? `?q=${encodeURIComponent(query)}` : ""}`, {}, "Accounts not loaded");
   if (!result?.ok) return;
   container.replaceChildren(result.data.length
-    ? table("LabRats accounts", ["Name", "Username", "Email", "Role", "Actions"], result.data.map((user) => [
+    ? table("LabRats accounts", ["Name", "Username", "Email", "Role", "Sign-in", "Actions"], result.data.map((user) => [
       user.name, user.uid, user.email && user.email !== "?" ? user.email : "",
       roleSelect(user),
+      activeToggle(user),
       el("div", { class: "labrats__row-actions" }, resetPassword(user), deleteButton(user)),
     ]))
     : emptyState(query ? "No accounts match that search." : "No accounts yet."));
@@ -225,7 +246,8 @@ function turnInCard(turnin) {
 }
 
 function openToggle(assignment) {
-  const input = el("input", { class: "ocs__toggle-input", type: "checkbox", role: "switch", checked: assignment.is_open });
+  const toggle = toggleSwitch("Open for turn-ins", { checked: assignment.is_open });
+  const input = toggle.firstChild;
   input.addEventListener("change", async () => {
     const result = await call(`/api/labrats/assignments/${assignment.id}`, { method: "PUT", body: { is_open: input.checked } }, "Assignment not updated");
     if (result?.ok) {
@@ -235,9 +257,7 @@ function openToggle(assignment) {
       input.checked = assignment.is_open;
     }
   });
-  return el("label", { class: "ocs__toggle" }, input,
-    el("span", { class: "ocs__toggle-track", "aria-hidden": "true" }),
-    el("span", { class: "ocs__toggle-label" }, "Open for turn-ins"));
+  return toggle;
 }
 
 function assignmentCard(assignment) {

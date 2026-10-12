@@ -32,6 +32,14 @@ export function table(caption, headings, rows) {
       el("tbody", {}, rows.map((cells) => el("tr", {}, cells.map((cell) => el("td", {}, cell)))))));
 }
 
+// An OCS toggle switch (ocs__toggle grammar). The checkbox is the label's first child.
+export function toggleSwitch(labelText, { checked = false, disabled = false, name } = {}) {
+  return el("label", { class: "ocs__toggle" },
+    el("input", { class: "ocs__toggle-input", type: "checkbox", role: "switch", checked, disabled, "aria-label": name }),
+    el("span", { class: "ocs__toggle-track", "aria-hidden": "true" }),
+    el("span", { class: "ocs__toggle-label" }, labelText));
+}
+
 export function emptyState(message) {
   return el("p", { class: "labrats__hint" }, message);
 }
