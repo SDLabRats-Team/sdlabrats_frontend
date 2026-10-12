@@ -2,7 +2,7 @@
 // POST /api/authenticate (sign in), GET /api/id (who am I), DELETE /api/authenticate (sign out).
 import { baseurl } from "../../api/config.js";
 import { apiRequest, BackendUnavailableError } from "./labrats-api.js";
-import { safeNextPath, homeForRole, sessionLink, cookieBlockedMessage } from "./labrats-session-rules.js";
+import { safeNextPath, homeForRole, sessionLink } from "./labrats-session-rules.js";
 import { readStorage, writeStorage, removeStorage } from "./labrats-storage.js";
 
 // Set while this browser holds a sign-in, so pages only ask the backend who is signed in
@@ -72,7 +72,7 @@ export function initSignInForm(form, { requiredRole = form.dataset.requiredRole 
       }
       const user = await getCurrentUser();
       if (!user) {
-        setStatus(form, "error", cookieBlockedMessage(window.location.href));
+        setStatus(form, "error", "Signed in, but this browser blocked the sign-in cookie. Allow cookies for this site and try again.");
         return;
       }
       if (requiredRole && user.role !== requiredRole) {

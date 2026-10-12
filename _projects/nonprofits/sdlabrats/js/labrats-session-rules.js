@@ -20,17 +20,6 @@ export function sessionLink(user, baseurl = "") {
   return { href: homeForRole(user.role, baseurl), label: user.role === "Admin" ? "Admin console" : "My assignments" };
 }
 
-// The backend accepted the password but its cookie was not kept. On 127.0.0.1 that is expected:
-// the shared OCS config always calls the backend at localhost, a different site to the browser.
-export function cookieBlockedMessage(href) {
-  const url = new URL(href);
-  if (url.hostname === "127.0.0.1") {
-    url.hostname = "localhost";
-    return `Sign-in cookies only work at localhost on a development machine. Open ${url.href} and sign in there.`;
-  }
-  return "Signed in, but this browser blocked the sign-in cookie. Allow cookies for this site and try again.";
-}
-
 const DATE_FORMAT = { month: "short", day: "numeric", year: "numeric" };
 
 // "2026-10-31" -> "Oct 31, 2026". Date-only strings are read as calendar dates, not UTC instants.

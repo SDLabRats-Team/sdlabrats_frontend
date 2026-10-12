@@ -58,7 +58,7 @@ Split logic into clear layers:
 * **System Expansion:** Work within the existing systems and expand them if needed, rather than creating completely new parallel architectures.
 * **Calendar pages:** Keep layout and modal styling out of `navigation/calendar.md`; use semantic classes and SCSS instead of utility-heavy inline markup.
 * **Cross-origin APIs:** Spring endpoints consumed from `pages.opencodingsociety.com` should explicitly allow credentialed cross-origin requests.
-* **Local sign-in cookie:** on `127.0.0.1`, `config.js` still calls `localhost:8587`, a cross-site request, so the browser drops the Flask development `SameSite=Lax` sign-in cookie; test sign-in at `http://localhost:4500`.
+* **Local sign-in cookie:** `localhost` and `127.0.0.1` are different sites; `pythonURI` in `config.js` must use the page's own hostname, or the browser drops the Flask development `SameSite=Lax` sign-in cookie and `/api/id` returns 401.
 * **Documentation:** Create detailed documentation for difficult or complex implementations as necessary.
 * **Commenting:** Add comments for non-trivial logic, but keep them minimal and focused on *why* rather than *what*.
 * **Ask Questions:** If system-level constraints, requirements, or patterns are unclear, pause and ask the user questions before proceeding.

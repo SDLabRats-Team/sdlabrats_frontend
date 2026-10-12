@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-const { safeNextPath, homeForRole, sessionLink, cookieBlockedMessage, formatDate, describeDue, describeTurnIn, summarizeDetails } = await import(
+const { safeNextPath, homeForRole, sessionLink, formatDate, describeDue, describeTurnIn, summarizeDetails } = await import(
   "../_projects/nonprofits/sdlabrats/js/labrats-session-rules.js"
 );
 
@@ -47,10 +47,4 @@ test("header link follows the signed-in role", () => {
   assert.deepEqual(sessionLink(null, "/base"), { href: "/base/sign-in/", label: "Sign in" });
   assert.deepEqual(sessionLink({ role: "Admin" }), { href: "/admin/", label: "Admin console" });
   assert.deepEqual(sessionLink({ role: "User" }), { href: "/account/", label: "My assignments" });
-});
-
-test("a dropped cookie on 127.0.0.1 points to the same page at localhost", () => {
-  assert.match(cookieBlockedMessage("http://127.0.0.1:4500/sign-in/?next=%2Faccount%2F"),
-    /Open http:\/\/localhost:4500\/sign-in\/\?next=%2Faccount%2F and sign in there\.$/);
-  assert.match(cookieBlockedMessage("https://pkdev0101.github.io/sdlabrats_frontend/sign-in/"), /Allow cookies/);
 });

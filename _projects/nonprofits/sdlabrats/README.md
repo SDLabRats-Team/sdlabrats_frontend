@@ -94,9 +94,9 @@ ask `/api/id` when someone might be signed in; families who never sign in make n
 
 Sign-in needs the backend's cookie to reach the browser:
 
-- Local: run the backend on 8587 and open the site at `http://localhost:4500`. At
-  `127.0.0.1` the cookie is dropped (`config.js` calls the backend at `localhost`, a different
-  site), and the sign-in form says to switch to `localhost`.
+- Local: run the backend on 8587 (`python main.py`) and the site with `make`; sign in at
+  `http://localhost:4500/sign-in/` (or `127.0.0.1`). `config.js` calls the backend on the
+  page's own host, so the backend's `SameSite=Lax` cookie stays same-site.
 - Deployed: the backend that `config.js` points to (`flask.opencodingsociety.com`) must run
   this backend's code and list the site's origin in its CORS `allowed_origins`.
 
