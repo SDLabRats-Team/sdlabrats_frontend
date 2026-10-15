@@ -1,4 +1,3 @@
-{%- assign org = site.data.sdlabrats -%}
 <form class="labrats__form" data-labrats-form="contact" novalidate>
   <div class="labrats__form-grid">
     {% include projects/sdlabrats/form-parts.html part="name" form="contact" %}
@@ -7,9 +6,6 @@
       <label for="contact-interest">What are you asking about? <span class="labrats__required">required</span></label>
       <select class="ocs__input" id="contact-interest" name="interest" required aria-describedby="contact-interest-error">
         <option value="">Choose one</option>
-        {%- for program in org.programs %}
-        <option value="{{ program.slug }}">{{ program.short }}</option>
-        {%- endfor %}
         <option value="other">Something else</option>
       </select>
       <p class="labrats__field-error" id="contact-interest-error" hidden></p>

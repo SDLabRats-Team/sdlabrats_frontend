@@ -2,13 +2,12 @@
   Sign-in form for the backend's existing accounts (wired by labrats-auth.js).
   Params: form (id prefix), role (optional, e.g. "Admin" for the admin console), button.
 {%- endcomment -%}
-{%- assign org = site.data.sdlabrats -%}
 <form class="labrats__form labrats__form--compact labrats__signin" data-labrats-signin{% if include.role %} data-required-role="{{ include.role }}"{% endif %} novalidate>
   <div class="labrats__form-grid">
     {% include projects/sdlabrats/field.html form=include.form name="uid" label="Username" required=true autocomplete="username" wide=true %}
     {% include projects/sdlabrats/field.html form=include.form name="password" label="Password" type="password" required=true autocomplete="current-password" wide=true %}
   </div>
-  <div class="labrats__form-actions" data-labrats-phone="{{ org.phone }}">
+  <div class="labrats__form-actions" data-labrats-phone>
     <button class="ocs__btn signal fill" type="submit">{{ include.button | default: "Sign in" }}</button>
     <p class="labrats__form-status" role="status" aria-live="polite"></p>
   </div>

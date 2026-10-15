@@ -6,58 +6,68 @@ OCS project. Planning lives in
 
 ## How the project is wired
 
+The frontend stores no data. Every page is an empty shell; `js/labrats-site.js` asks the Flask
+backend (`sdlabrats_backend`) for `GET /api/labrats/page?path=<this address>` and renders the
+announcement, navigation, page, and footer from the response. Organization facts, navigation,
+page text, program facts, camp day plans, and session dates and status all live in the backend's
+database (seeded from `sdlabrats_backend/model/labrats_seed/*.json`).
+
 | Piece | Source (edit here) | Published to (generated, git-ignored) |
 |-------|--------------------|----------------------------------------|
-| Pages | `navigation/*.md` | `_posts/projects/sdlabrats/` |
-| Page templates and partials | `navigation/*.html` | `_includes/projects/sdlabrats/` |
-| Styles | `sass/` | `_sass/projects/sdlabrats/`, compiled into `/assets/css/style.css` |
-| Scripts | `js/` | `/assets/js/projects/sdlabrats/` |
+| Page routes | `navigation/*.md` (only `layout`, `permalink`, and `scripts` for app pages) | `_posts/projects/sdlabrats/` |
+| Header, footer, and form markup | `navigation/*.html` | `_includes/projects/sdlabrats/` |
+| Renderer and page scripts | `js/` | `/assets/js/projects/sdlabrats/` |
+| Styles | `sass/` | `/assets/css/projects/sdlabrats/main.css` |
 | Images | `images/` | `/images/projects/sdlabrats/` |
 
-Two files sit outside the project folder because Jekyll only reads them from fixed
-locations:
+`_layouts/sdlabrats.html` is the shell (head, empty header and footer, a loading state, and the
+form `<template>`s). Downloadable PDFs live in `assets/pdfs/sdlabrats/`. Build with `make`; the
+project is registered in `_projects/.makeprojects` as `nonprofits/sdlabrats`.
 
-- `_layouts/sdlabrats.html`: the page shell (head, header, footer).
-- `_data/sdlabrats.yml`: organization facts, navigation, and the program catalog.
-  Phone number, address, EIN, and social links are written once here.
+### Rendering
 
-Downloadable PDFs (impact report, at-home lab procedures) live in
-`assets/pdfs/sdlabrats/`.
+| Module | Job |
+|--------|-----|
+| `labrats-site.js` | Loads the page bundle (an unknown address gets the `/404.html` page), renders it, then wires the menu, theme, forms, and sign-in link. If the backend can't be reached, the page says so and offers "Try again". |
+| `labrats-templates.js` | Header links, footer, announcement, `<title>` and description, and the page templates. |
+| `labrats-widgets.js` | Lists built from the bundle: programs, open and past sessions, camp day plans, press clippings, flyers, social links, Donorbox embeds, and shared text blocks. |
+| `labrats-html.js` | Inserts page HTML from the backend (drops scripts, event handlers, and unknown iframes; adds the baseurl to site links) and fills `data-labrats-org` placeholders with organization facts. |
+| `labrats-content-rules.js` | Pure helpers, tested in `tests/test_sdlabrats_content_rules.mjs`. |
 
-Build with the normal workflow: `make` (or `make build`). The project is registered
-in `_projects/.makeprojects` as `nonprofits/sdlabrats`.
+Page bodies in the backend use placeholders instead of copies of data, so a fact changes in one
+place: `data-labrats-org="phone"` (text), `data-labrats-org-href="{phone_href}"` (an attribute),
+`data-labrats-block="help_paying_families"` (shared HTML), `data-labrats-widget="session-list"`
+(a list), and `data-labrats-form-slot="contact"` (a form; its markup is frontend interface, its
+choices come from the backend).
 
-### Backend
+### Backend endpoints
 
-Forms post to the Flask backend (`sdlabrats_backend`):
+- `GET /api/labrats/page?path=` returns `{ site, page, session, programs, sessions }`.
+- `POST /api/labrats/inquiries` stores contact, scholarship, partnership, video-topic, and
+  newsletter submissions, and emails staff when SMTP is configured.
+- Admin only: `GET`/`PUT /api/labrats/sessions[/<id>]` and `GET`/`PUT /api/labrats/announcement`,
+  used by the admin console's "Schedule & notice" tab.
 
-- `POST /api/labrats/inquiries` stores contact, scholarship, partnership,
-  video-topic, and newsletter submissions, and emails staff when SMTP is configured.
-- `GET /api/programs/` returns the program catalog the backend validates against.
-
-`js/labrats-forms.js` reads the backend address from `assets/js/api/config.js`
-(`pythonURI`), so local development talks to `localhost:8587`.
-
-Payments and registration stay on Donorbox (out of scope for the rebuild). A
-registration page sets `donorbox_campaign` in its front matter and the template
-embeds the matching Donorbox form.
+Payments and registration stay on Donorbox. A session's `donorbox_campaign` (in the backend) picks
+the embedded form; it shows only while the session is open.
 
 ## Page templates
 
-Every page sets `layout: sdlabrats` plus a `template`:
+Each backend page record has a `template`:
 
-| `template` | Used for | Key front matter |
-|------------|----------|------------------|
-| `page` (default) | Hubs and combined pages | `section`, `description`, `contents` ("On this page" bar) |
-| `program` | The five program pages; one shared information order | `program` (catalog slug), `facts` |
-| `registration` | Monthly afterschool and camp registration pages | `session` block, `donorbox_campaign` |
+| `template` | Used for | Key fields |
+|------------|----------|------------|
+| `default` | Hubs and combined pages | `section`, `description`, `contents` ("On this page" bar) |
+| `home` | The home page | page HTML only |
+| `program` | The five program pages; one shared information order | `program` (catalog slug), `facts`, `signup` |
+| `registration` | Afterschool months, camps, events, payment forms | the matching session, `day_plans`, `camp_why` |
 | `archive` | Past events and retired pages that still have URLs | `archive_note`, `current_url` |
 | `redirect` | Live URLs that were empty, moved, or merged into a combined page | `redirect_to` (may include a `#section`) |
 
 ### Combined pages
 
 The main navigation has four destinations. Related topics share one page, split into sections
-with an "On this page" bar (`contents:` front matter, `navigation/page-contents.html`):
+with an "On this page" bar (the page's `contents` field):
 
 - `/about-us/` About and support: who we are, impact, team, how we teach, help paying, charter
   schools, press, flyers. `/support/`, `/labrats-team/`, `/philosophy/`, `/press/`,
@@ -104,14 +114,16 @@ Sign-in needs the backend's cookie to reach the browser:
 - Deployed: the backend that `config.js` points to (`flask.opencodingsociety.com`) must run
   this backend's code and list the site's origin in its CORS `allowed_origins`.
 
-Pages can load extra modules with `scripts: [file.js]` in front matter.
+App pages (sign-in, account, admin) keep their interface in their `.md` body and load extra
+modules with `scripts: [file.js]`; their heading and lead still come from the backend.
 
 ### Keeping the schedule current
 
-`/schedule/` lists every registration page whose front matter has
-`session.status: open`. To open next month's afterschool sessions, edit the
-registration page for that month (dates, `donorbox_campaign`) and set
-`status: open`; set last month's page to `closed`. No other page needs editing.
+`/schedule/` and the program pages list every session the backend marks `open`. In the admin
+console, open the "Schedule & notice" tab and switch next month's sessions on and last month's
+off; the change shows on the site at once. The same tab edits the notice above every page
+(new wording gets a new id, so visitors who dismissed the old one see it). Dates, times, and the
+Donorbox campaign can be changed through `PUT /api/labrats/sessions/<id>`.
 
 ## Design direction
 

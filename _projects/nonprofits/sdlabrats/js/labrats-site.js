@@ -1,7 +1,15 @@
 // Entry point for every LabRats page (loaded as a module from _layouts/sdlabrats.html).
+// The frontend stores no content: this asks the backend for the page bundle
+// (GET /api/labrats/page?path=...) and renders the header, page, and footer from it.
+import { baseurl } from "../../api/config.js";
+import { apiRequest, BackendUnavailableError } from "./labrats-api.js";
 import { initForms } from "./labrats-forms.js";
 import { readStorage, writeStorage } from "./labrats-storage.js";
 import { initSessionLink } from "./labrats-auth.js";
+import { bindOrg } from "./labrats-html.js";
+import { pagePathFrom, withBaseurl } from "./labrats-content-rules.js";
+import { renderPlaceholders } from "./labrats-widgets.js";
+import { renderAnnouncement, renderFooter, renderHead, renderHeader, renderMain, renderUnavailable } from "./labrats-templates.js";
 
 const THEME_KEY = "labrats-theme";
 const DISMISSED_PREFIX = "labrats-dismissed-";
@@ -83,9 +91,75 @@ function initContents() {
   sections.forEach((section) => observer.observe(section));
 }
 
+// Forms are interface, so their markup ships with the layout as <template>s; their choices
+// (program interests, scholarship programs) come from the bundle.
+function fillForms(root, ctx) {
+  root.querySelectorAll("[data-labrats-form-slot]").forEach((slot) => {
+    const template = document.getElementById(`labrats-form-${slot.dataset.labratsFormSlot}`);
+    if (template) slot.replaceWith(template.content.cloneNode(true));
+  });
+  root.querySelectorAll('select[name="interest"]').forEach((select) => {
+    const other = select.querySelector('option[value="other"]');
+    ctx.programs.forEach((program) => select.insertBefore(new Option(program.short, program.slug), other));
+  });
+  root.querySelectorAll('[data-labrats-choices="programs"]').forEach((group) => {
+    group.replaceChildren(...ctx.site.scholarship_programs.map((choice) => {
+      const label = document.createElement("label");
+      const input = Object.assign(document.createElement("input"), { type: "checkbox", name: "programs", value: choice.value });
+      label.append(input, ` ${choice.label}`);
+      return label;
+    }));
+  });
+  root.querySelectorAll('input[name="source_page"]').forEach((input) => { input.value = ctx.page.path; });
+}
+
+// The page bundle for this address; an unknown address gets the not-found page.
+async function loadBundle() {
+  const path = pagePathFrom(window.location.pathname, baseurl);
+  const result = await apiRequest(`/api/labrats/page?path=${encodeURIComponent(path)}`);
+  if (result.ok) return result.data;
+  if (result.status === 404) {
+    const missing = await apiRequest(`/api/labrats/page?path=${encodeURIComponent("/404.html")}`);
+    if (missing.ok) return missing.data;
+  }
+  throw new BackendUnavailableError(`Page bundle failed (${result.status})`);
+}
+
+function renderSite(bundle) {
+  const ctx = { ...bundle, baseurl, url: (path) => withBaseurl(path, baseurl) };
+  const main = document.getElementById("main");
+  const app = main.querySelector("[data-labrats-app]");
+  renderHead(ctx);
+  document.querySelector("[data-labrats-announcement-slot]").replaceChildren(renderAnnouncement(ctx) || "");
+  renderHeader(document.querySelector(".labrats__header"), ctx);
+  renderFooter(document.querySelector(".labrats__footer"), ctx);
+  main.replaceChildren(...renderMain(ctx, app && app.childElementCount ? app : null).filter(Boolean));
+  [main, document.querySelector(".labrats__footer")].forEach((root) => {
+    renderPlaceholders(root, ctx);
+    fillForms(root, ctx);
+  });
+  bindOrg(document.body, ctx.site.org, baseurl);
+  document.body.toggleAttribute("data-labrats-ready", true);
+  main.removeAttribute("aria-busy");
+  if (window.location.hash) document.getElementById(window.location.hash.slice(1))?.scrollIntoView();
+}
+
+async function start() {
+  const main = document.getElementById("main");
+  try {
+    renderSite(await loadBundle());
+  } catch (error) {
+    if (!(error instanceof BackendUnavailableError)) throw error;
+    main.replaceChildren(renderUnavailable(() => window.location.reload()));
+    main.removeAttribute("aria-busy");
+    return;
+  }
+  initContents();
+  initAnnouncement();
+  initForms();
+  initSessionLink();
+}
+
 initThemeToggle();
 initMenu();
-initContents();
-initAnnouncement();
-initForms();
-initSessionLink();
+start();

@@ -8,7 +8,7 @@ needs an answer from LabRats before it can be completed.
 
 | # | Page | Issue | What the new site does |
 |---|------|-------|------------------------|
-| 1 | Afterschool | The older afterschool group is "Grades 4-8" on the home page and the registration pages, but "Grade 3-6" on the afterschool hub and "3rd-6th" on the October 2026 flyer. | Uses **4-8**, matching the registration pages. Change `grades` in the registration front matter and `_data/sdlabrats.yml` if 3-6 is correct. |
+| 1 | Afterschool | The older afterschool group is "Grades 4-8" on the home page and the registration pages, but "Grade 3-6" on the afterschool hub and "3rd-6th" on the October 2026 flyer. | Uses **4-8**, matching the registration pages. If 3-6 is correct, change `grades` on those sessions (`PUT /api/labrats/sessions/<id>`) and on the afterschool program in the backend. |
 | 2 | Thrive payment | The page says "Follow this link to the Thrive registration page" but has no link. | Says to register through Thrive and offers phone help. Add the Thrive URL to `thrive-payment-processing-only.md` and `register-today-for-thrive-classes.md`. |
 | 3 | Free open house | Dates are still the template placeholder "[Insert Dates, e.g., Friday, Oct 18 - Sunday, Oct 20]". | Omits the dates and points to the Donorbox form for times. Add real dates to `free-open-house-register-today.md`. |
 | 4 | Team | Jason Merrill's bio is "Something about Jason!" and there is no photo. | Shows name and title only. Send a bio and photo. |
@@ -57,7 +57,7 @@ needs an answer from LabRats before it can be completed.
 - **The 30-second 2021 winter camp video** (28 MB MP4 in WordPress uploads) was not migrated.
   Upload it to YouTube if it should stay online.
 - **Auto-opening holiday camp popup** became a dismissible announcement bar
-  (`announcement` in `_data/sdlabrats.yml`).
+  (the backend `announcement` setting, edited in the admin console's "Schedule & notice" tab).
 - **WooCommerce pages** (`/shop/`, `/cart/`, `/checkout/`, `/my-account/`, `/thank-you/`) had no
   store behind them; they now explain that registration happens on each session page.
 - **Contact form choices** were Courses, Workshops, Assembly, Demo Lab Station, and Other. They now

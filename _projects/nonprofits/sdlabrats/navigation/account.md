@@ -1,11 +1,6 @@
 ---
 layout: sdlabrats
-title: My assignments
-heading: My assignments
-lead: Assignments from LabRats, and the work you've turned in.
-description: See and turn in your San Diego LabRats assignments.
 permalink: /account/
-noindex: true
 hide: true
 search_exclude: true
 scripts: [labrats-account.js]

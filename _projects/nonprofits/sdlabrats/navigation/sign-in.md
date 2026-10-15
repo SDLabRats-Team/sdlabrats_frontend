@@ -1,16 +1,10 @@
 ---
 layout: sdlabrats
-title: Sign in
-heading: Sign in
-lead: For LabRats students and staff. Accounts are set up by LabRats; ask us if you need one.
-description: Sign in to your San Diego LabRats account to see and turn in assignments.
 permalink: /sign-in/
-noindex: true
 hide: true
 search_exclude: true
 scripts: [labrats-signin.js]
 ---
-{%- assign org = site.data.sdlabrats -%}
 <div class="labrats__split labrats__split--narrow-aside">
   <section class="labrats__section" aria-labelledby="signin-title">
     <h2 id="signin-title" class="labrats__visually-hidden">Sign in</h2>
@@ -26,7 +20,7 @@ scripts: [labrats-signin.js]
   </section>
   <aside class="labrats__section" aria-labelledby="signin-help-title">
     <h2 id="signin-help-title">Need help?</h2>
-    <p>Forgot your password or need an account? Call <a href="{{ org.phone_href }}">{{ org.phone }}</a> or <a href="{{ '/contact/#contact' | relative_url }}">send us a message</a>, and LabRats staff will reset it.</p>
+    <p>Forgot your password or need an account? Call <a data-labrats-org-href="{phone_href}"><span data-labrats-org="phone"></span></a> or <a href="{{ '/contact/#contact' | relative_url }}">send us a message</a>, and LabRats staff will reset it.</p>
     <p>Staff: sign in here or go straight to the <a href="{{ '/admin/' | relative_url }}">admin console</a>.</p>
   </aside>
 </div>

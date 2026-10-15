@@ -1,9 +1,12 @@
-// /admin/: LabRats staff console. Admin-only sign-in, then three tabs: accounts, website form
-// submissions, and assignments with their turn-ins. Every action is enforced again by the backend.
+// /admin/: LabRats staff console. Admin-only sign-in, then four tabs: accounts, website form
+// submissions, assignments with their turn-ins, and the website's sessions and notice (the site
+// itself stores no data, so this is where staff change it). Every action is enforced again by the backend.
+import { baseurl } from "../../api/config.js";
 import { apiRequest, BackendUnavailableError } from "./labrats-api.js";
 import { getCurrentUser, initSignInForm, initSignOutButtons } from "./labrats-auth.js";
 import { showErrors, setStatus, focusFirstError } from "./labrats-forms.js";
 import { formatDate, formatDateTime, summarizeDetails } from "./labrats-session-rules.js";
+import { sessionDates, withBaseurl } from "./labrats-content-rules.js";
 import { el, table, emptyState, toggleSwitch } from "./labrats-dom.js";
 
 const root = document.querySelector("[data-labrats-admin]");
@@ -331,6 +334,69 @@ function initAssignments() {
   });
 }
 
+// ---------- Schedule and notice ----------
+
+function sessionToggle(session) {
+  const toggle = toggleSwitch("Open", { checked: session.status === "open", name: `Registration open: ${session.title}` });
+  const input = toggle.firstChild;
+  input.addEventListener("change", async () => {
+    const status = input.checked ? "open" : "closed";
+    const result = await call(`/api/labrats/sessions/${session.id}`, { method: "PUT", body: { status } }, "Session not updated");
+    if (result?.ok) {
+      session.status = result.data.status;
+      announce(`${session.title} is now ${session.status === "open" ? "open for registration" : "closed"}.`);
+    } else {
+      input.checked = session.status === "open";
+    }
+  });
+  return toggle;
+}
+
+async function loadSessions() {
+  const container = root.querySelector("[data-admin-sessions]");
+  const result = await call("/api/labrats/sessions", {}, "Sessions not loaded");
+  if (!result?.ok) return;
+  container.replaceChildren(result.data.length
+    ? table("Registration sessions", ["Session", "Program", "Dates", "Registration"], result.data.map((session) => [
+      el("a", { href: withBaseurl(session.path, baseurl) }, session.title),
+      session.program || "",
+      sessionDates(session),
+      sessionToggle(session),
+    ]))
+    : emptyState("No registration sessions yet."));
+}
+
+async function loadAnnouncement() {
+  const form = root.querySelector('[data-admin-form="announcement"]');
+  const result = await call("/api/labrats/announcement", {}, "Notice not loaded");
+  if (!result?.ok) return;
+  for (const name of ["text", "link_text", "url"]) form.elements[name].value = result.data[name] || "";
+  form.elements.show.checked = Boolean(result.data.show);
+}
+
+function initSite() {
+  const form = root.querySelector('[data-admin-form="announcement"]');
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const body = {
+      text: form.elements.text.value, link_text: form.elements.link_text.value,
+      url: form.elements.url.value.trim(), show: form.elements.show.checked,
+    };
+    setStatus(form, "pending", "Saving...");
+    const result = await call("/api/labrats/announcement", { method: "PUT", body }, "Notice not saved");
+    if (result?.status === 400) {
+      showErrors(form, result.data.errors);
+      setStatus(form, "error", "Please fix the highlighted fields.");
+      focusFirstError(form);
+    } else if (result?.ok) {
+      showErrors(form, {});
+      setStatus(form, "success", result.data.show ? "Saved. The notice shows on every page." : "Saved. The notice is turned off.");
+    } else {
+      setStatus(form, "error", "The notice wasn't saved.");
+    }
+  });
+}
+
 // ---------- Start ----------
 
 function showConsole(user) {
@@ -341,12 +407,15 @@ function showConsole(user) {
   loadUsers();
   loadSubmissions();
   loadAssignments();
+  loadSessions();
+  loadAnnouncement();
 }
 
 async function start() {
   initTabs();
   initUsers();
   initAssignments();
+  initSite();
   initSignOutButtons(root);
   root.querySelectorAll("[data-admin-submission-filter]").forEach((select) => select.addEventListener("change", loadSubmissions));
 

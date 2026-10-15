@@ -3,7 +3,9 @@
 Every page published on sdlabrats.org (75, from the WordPress pages API on 2026-10-06) and where it
 lives in the rebuild. URLs are unchanged, so existing links, flyers, and QR codes keep working.
 
-Regenerate this table if pages are added: it is built from each page's front matter.
+Every page's content now lives in the Flask backend (`labrats_pages`, seeded from
+`sdlabrats_backend/model/labrats_seed/pages.json`); the frontend only keeps each page's route.
+Regenerate this table from that seed if pages are added.
 
 ## Templates
 
@@ -17,7 +19,7 @@ Regenerate this table if pages are added: it is built from each page's front mat
 
 ## Live pages
 
-| URL | Live title | New title | Section | Template | Source |
+| URL | Live title | New title | Section | Template | Route file |
 |-----|-----------|-----------|---------|----------|--------|
 | `/4-8-stem-center-registration/` | 4-8 STEM Center Registration 4 April | Afterschool, grades 4-8: April 2025 | Schedule & Pricing | registration (closed) | `navigation/4-8-stem-center-registration.md` |
 | `/4-8-stem-center-registration-2/` | 4-8 STEM Center Registration 1 January | Afterschool, grades 4-8: January 2026 | Schedule & Pricing | registration (closed) | `navigation/4-8-stem-center-registration-2.md` |
@@ -124,14 +126,14 @@ Repeated blocks on the old site now have one source each:
 
 | Content | Old site | Now |
 |---------|----------|-----|
-| Phone, address, EIN, social links | Typed on many pages | `_data/sdlabrats.yml` |
-| Afterschool session description | 20 registration pages | `navigation/afterschool-session.html` |
-| "Why parents/kids choose LabRats camps" | 10 camp pages | `navigation/camp-why.html` |
-| Camp daily schedules | 10 camp pages | `camp_days` in `_data/sdlabrats.yml` |
-| Scholarship and charter summary | Home and most registration pages | `navigation/help-paying.html` |
-| Program summaries | Home, plus desktop and mobile copies | `programs` in `_data/sdlabrats.yml` |
-| Current sessions | Hand-edited hub pages | Registration front matter, listed by `navigation/session-list.html` |
+| Phone, address, EIN, social links | Typed on many pages | Backend `org` and `social` settings, placed with `data-labrats-org` |
+| Afterschool session description | 20 registration pages | Backend block `afterschool_session` |
+| "Why parents/kids choose LabRats camps" | 10 camp pages | Backend block `camp_why` |
+| Camp daily schedules | 10 camp pages | Backend `camp_days` setting |
+| Scholarship and charter summary | Home and most registration pages | Backend blocks `help_paying_families` and `help_paying_schools` |
+| Program summaries | Home, plus desktop and mobile copies | Backend `labrats_programs` table |
+| Current sessions | Hand-edited hub pages | Backend `labrats_sessions` table, opened and closed in the admin console |
 | Team bios | Team page and Courses page | About and support, `#team` |
-| Video-topic request form | STEM at Home and BrainSTEMtv | STEM at Home only (`navigation/form-video-topic.html`) |
+| Video-topic request form | STEM at Home and BrainSTEMtv | STEM at Home only (`navigation/form-video-topic.html`, placed by the backend page) |
 | Support, charter funding, team, philosophy, press, flyers | Seven separate pages | One page, `/about-us/`, with an "On this page" bar |
 | Contact, donating, corporate sponsorship | Three separate pages | One page, `/contact/` |

@@ -1,8 +1,8 @@
-{%- assign org = site.data.sdlabrats -%}
+{%- comment -%} Header skeleton. labrats-site.js fills the section links and phone number from the backend. {%- endcomment -%}
 <header class="labrats__header">
   <div class="labrats__wrap labrats__header-row">
-    <a class="labrats__brand" href="{{ '/' | relative_url }}"{% if page.url == "/" %} aria-current="page"{% endif %}>
-      <img src="{{ org.logo | relative_url }}" width="48" height="48" alt="">
+    <a class="labrats__brand" href="{{ '/' | relative_url }}">
+      <img src="{{ '/images/projects/sdlabrats/labrats-logo.png' | relative_url }}" width="48" height="48" alt="">
       <span>San Diego <strong>LabRats</strong></span>
     </a>
 
@@ -12,15 +12,9 @@
     </button>
 
     <nav class="labrats__nav" id="labrats-nav" aria-label="Main">
-      <ul>
-        {%- for section in org.sections %}
-        <li>
-          <a href="{{ section.url | relative_url }}"{% if page.section == section.id %} aria-current="{% if page.url == section.url %}page{% else %}true{% endif %}"{% endif %}>{{ section.title }}</a>
-        </li>
-        {%- endfor %}
-      </ul>
-      <a class="labrats__nav-phone" href="{{ org.phone_href }}">Call {{ org.phone }}</a>
-      <a class="labrats__nav-signin" data-labrats-session-link href="{{ '/sign-in/' | relative_url }}"{% if page.url == '/sign-in/' or page.url == '/account/' or page.url == '/admin/' %} aria-current="page"{% endif %}>Sign in</a>
+      <ul data-labrats-sections></ul>
+      <a class="labrats__nav-phone" data-labrats-org-href="{phone_href}">Call <span data-labrats-org="phone"></span></a>
+      <a class="labrats__nav-signin" data-labrats-session-link href="{{ '/sign-in/' | relative_url }}">Sign in</a>
     </nav>
   </div>
 </header>

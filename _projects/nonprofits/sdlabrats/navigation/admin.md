@@ -1,11 +1,6 @@
 ---
 layout: sdlabrats
-title: Admin console
-heading: Admin console
-lead: Manage LabRats accounts, read form submissions, and review assignment turn-ins.
-description: San Diego LabRats staff console for accounts, form submissions, and assignments.
 permalink: /admin/
-noindex: true
 hide: true
 search_exclude: true
 scripts: [labrats-admin.js]
@@ -27,6 +22,7 @@ scripts: [labrats-admin.js]
       <button type="button" role="tab" id="tab-users" aria-controls="panel-users" aria-selected="true">Users</button>
       <button type="button" role="tab" id="tab-submissions" aria-controls="panel-submissions" aria-selected="false" tabindex="-1">Form submissions</button>
       <button type="button" role="tab" id="tab-assignments" aria-controls="panel-assignments" aria-selected="false" tabindex="-1">Assignments</button>
+      <button type="button" role="tab" id="tab-site" aria-controls="panel-site" aria-selected="false" tabindex="-1">Schedule &amp; notice</button>
     </div>
 
     <section class="labrats__console-panel" role="tabpanel" id="panel-users" aria-labelledby="tab-users">
@@ -113,6 +109,33 @@ scripts: [labrats-admin.js]
         </form>
       </details>
       <div data-admin-assignments></div>
+    </section>
+
+    <section class="labrats__console-panel" role="tabpanel" id="panel-site" aria-labelledby="tab-site" hidden>
+      <h2>Schedule and notice</h2>
+      <p>The website reads these from the backend. Open a session to list it on the schedule and show its registration form; close it once its dates pass.</p>
+      <details class="labrats__panel-form">
+        <summary>Notice above every page</summary>
+        <form class="labrats__form" data-admin-form="announcement" novalidate>
+          <div class="labrats__form-grid">
+            {% include projects/sdlabrats/field.html form="announcement" name="text" label="Notice" autocomplete="off" wide=true %}
+            {% include projects/sdlabrats/field.html form="announcement" name="link_text" label="Link text" autocomplete="off" %}
+            {% include projects/sdlabrats/field.html form="announcement" name="url" label="Link to" autocomplete="off" hint="A page on this site, like /camps/." %}
+            <div class="labrats__field labrats__field--toggle">
+              <label class="ocs__toggle">
+                <input class="ocs__toggle-input" type="checkbox" role="switch" name="show">
+                <span class="ocs__toggle-track" aria-hidden="true"></span>
+                <span class="ocs__toggle-label">Show on every page</span>
+              </label>
+            </div>
+          </div>
+          <div class="labrats__form-actions">
+            <button class="ocs__btn signal fill" type="submit">Save notice</button>
+            <p class="labrats__form-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </details>
+      <div data-admin-sessions></div>
     </section>
   </div>
 </div>

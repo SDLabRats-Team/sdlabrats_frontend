@@ -3,8 +3,8 @@
   - "name": first and last name fields
   - "trap": hidden field that bots fill in and people never see
   - "submit": submit button, live status line, and the no-JavaScript fallback
+  The phone number for error messages (data-labrats-phone) is filled in from the backend.
 {%- endcomment -%}
-{%- assign org = site.data.sdlabrats -%}
 {%- case include.part -%}
 {%- when "name" -%}
 {%- comment -%} Jekyll include params cannot take filters, so names are built first. {%- endcomment -%}
@@ -26,9 +26,9 @@
   <input id="{{ include.form }}-website" name="website" type="text" tabindex="-1" autocomplete="off">
 </div>
 {%- when "submit" -%}
-<div class="labrats__form-actions" data-labrats-phone="{{ org.phone }}">
+<div class="labrats__form-actions" data-labrats-phone>
   <button class="ocs__btn signal fill" type="submit">{{ include.label | default: "Send" }}</button>
   <p class="labrats__form-status" role="status" aria-live="polite"></p>
 </div>
-<noscript><p class="labrats__hint">This form needs JavaScript. You can also call us at <a href="{{ org.phone_href }}">{{ org.phone }}</a>.</p></noscript>
+<noscript><p class="labrats__hint">This form needs JavaScript.</p></noscript>
 {%- endcase -%}

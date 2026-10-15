@@ -67,7 +67,7 @@ Split logic into clear layers:
 
 * Treat [Makefile](Makefile) as the single source of truth; common targets are `make`/`make serve-current`, `make dev`, `make stop`, `make convert`, and `make convert-single` (details in [README.md](README.md)).
 * Order matters: stop → build projects → convert notebooks/docx → split courses → jekyll serve (follow [Makefile](Makefile)).
-* **San Diego LabRats site:** lives in `_projects/nonprofits/sdlabrats/` (see its README). It owns the site root `/`, uses `_layouts/sdlabrats.html` and `_data/sdlabrats.yml`, and posts forms to the Flask backend `/api/labrats/inquiries`. Keep sdlabrats.org URLs unchanged.
+* **San Diego LabRats site:** lives in `_projects/nonprofits/sdlabrats/` (see its README). It owns the site root `/`, uses the empty shell `_layouts/sdlabrats.html`. The frontend stores no data: page content, organization facts, navigation, programs, and sessions live in the Flask backend, and each page loads them from `GET /api/labrats/page?path=` and renders with JS; `navigation/*.md` keep only the route (`layout`, `permalink`). Do not add a `_data` file or data in front matter. Forms post to `/api/labrats/inquiries`. Keep sdlabrats.org URLs unchanged.
 * Project builds must run the [SASS import generator](scripts/generate_sass_imports.py) to create `_sass/projects/_all.scss`; `build-registered-projects` owns this dependency so Jekyll can resolve `projects/all`.
 * Use template-generated project Makefiles. Do not add local npm manifests, `.gitignore` files or Makefile overrides for shared browser libraries. Keep shared runtime libraries in `assets/js/vendor/` with licenses and version documentation; ordinary builds need no npm installation.
 

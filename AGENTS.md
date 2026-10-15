@@ -69,7 +69,7 @@ while preserving all critical instructions. The agent must still communicate wit
 
 * 以 [Makefile](Makefile) 为唯一指令来源；常用目标 `make`/`make serve-current`、`make dev`、`make stop`、`make convert`、`make convert-single`（细节见 [README.md](README.md)）。
 * 顺序很关键：stop → build projects → convert notebooks/docx → split courses → jekyll serve（以 [Makefile](Makefile) 为准）。
-* **San Diego LabRats 站点：** 位于 `_projects/nonprofits/sdlabrats/`（见其 README），占用站点根 `/`，使用 `_layouts/sdlabrats.html` 与 `_data/sdlabrats.yml`，表单提交到 Flask 后端 `/api/labrats/inquiries`。保持 sdlabrats.org 原有 URL 不变。
+* **San Diego LabRats 站点：** 位于 `_projects/nonprofits/sdlabrats/`（见其 README），占用站点根 `/`，使用 `_layouts/sdlabrats.html` 空壳布局。前端不存放任何数据：页面内容、组织信息、导航、课程与场次都在 Flask 后端，页面通过 `GET /api/labrats/page?path=` 加载后由 JS 渲染；`navigation/*.md` 只保留路由（`layout`、`permalink`）。不要再添加 `_data` 文件或在 front matter 中写数据。表单提交到 `/api/labrats/inquiries`。保持 sdlabrats.org 原有 URL 不变。
 * 项目构建后必须运行 [SASS 导入生成器](scripts/generate_sass_imports.py)，以创建 `_sass/projects/_all.scss`；`build-registered-projects` 负责此依赖，避免 Jekyll 的 `projects/all` 导入失败。
 * 项目 Makefile 使用模板生成；不要为共享浏览器库添加本地 npm 清单、`.gitignore` 或 Makefile 覆盖。共享运行时库放在 `assets/js/vendor/`，保留许可证和版本说明；常规构建无需 npm 安装。
 

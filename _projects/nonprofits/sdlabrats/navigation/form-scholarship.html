@@ -1,6 +1,7 @@
 {%- comment -%}
   Scholarship application. Questions and the eligibility rule come from the live
-  sdlabrats.org form; the backend (model/labrats_inquiry.py) enforces the same rule.
+  sdlabrats.org form; the backend (model/labrats_inquiry.py) enforces the same rule. The program
+  checkboxes are filled from the backend's `scholarship_programs` setting.
 {%- endcomment -%}
 <form class="labrats__form" data-labrats-form="scholarship" novalidate>
   <fieldset class="labrats__fieldset">
@@ -24,13 +25,7 @@
 
   <fieldset class="labrats__fieldset" data-labrats-group="programs" aria-describedby="scholarship-programs-error">
     <legend>Which programs are you interested in? <span class="labrats__required">choose at least one</span></legend>
-    <div class="labrats__choices">
-      <label><input type="checkbox" name="programs" value="afterschool"> Afterschool classes (up to 75% off)</label>
-      <label><input type="checkbox" name="programs" value="thanksgiving-camps"> Thanksgiving break camps (up to 50% off)</label>
-      <label><input type="checkbox" name="programs" value="winter-camps"> Winter break camps (up to 50% off)</label>
-      <label><input type="checkbox" name="programs" value="spring-camps"> Spring break camps (up to 50% off)</label>
-      <label><input type="checkbox" name="programs" value="summer-camps"> Summer camps (up to 50% off)</label>
-    </div>
+    <div class="labrats__choices" data-labrats-choices="programs"></div>
     <p class="labrats__field-error" id="scholarship-programs-error" hidden></p>
   </fieldset>
 

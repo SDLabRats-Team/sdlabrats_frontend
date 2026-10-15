@@ -1,58 +1,38 @@
-{%- assign org = site.data.sdlabrats -%}
+{%- comment -%} Footer skeleton. labrats-site.js fills the text, site map, and social links from the backend. {%- endcomment -%}
 <footer class="labrats__footer">
   <div class="labrats__wrap labrats__footer-grid">
     <section class="labrats__footer-about" aria-labelledby="footer-about-title">
-      <h2 id="footer-about-title">{{ org.name }}</h2>
-      <p>{{ org.tagline }} to kids in grades K-8 across San Diego County.</p>
-      <p>A {{ org.nonprofit }}. EIN {{ org.ein }}.</p>
-      <p><a href="{{ org.impact_report | relative_url }}">Read our 2023-24 impact report (PDF)</a></p>
+      <h2 id="footer-about-title" data-labrats-org="name"></h2>
+      <div data-labrats-footer-about></div>
     </section>
 
     <section aria-labelledby="footer-visit-title">
       <h2 id="footer-visit-title">Visit</h2>
       <address>
-        {{ org.address.name }}<br>
-        {{ org.address.street }}<br>
-        {{ org.address.city }}, {{ org.address.region }} {{ org.address.postal }}
+        <span data-labrats-org="address.name"></span><br>
+        <span data-labrats-org="address.street"></span><br>
+        <span data-labrats-org="address.city"></span>, <span data-labrats-org="address.region"></span> <span data-labrats-org="address.postal"></span>
       </address>
-      <p>{{ org.hours }}</p>
-      <p><a href="{{ org.phone_href }}">{{ org.phone }}</a></p>
-      <p><a href="{{ org.address.map_url }}" rel="noopener">Directions</a></p>
+      <p data-labrats-org="hours"></p>
+      <p><a data-labrats-org-href="{phone_href}"><span data-labrats-org="phone"></span></a></p>
+      <p><a data-labrats-org-href="{address.map_url}" rel="noopener">Directions</a></p>
     </section>
 
-    <nav class="labrats__footer-sitemap" aria-label="Site map">
-      {%- for section in org.sections %}
-      <div>
-        <h2>{{ section.title }}</h2>
-        <ul>
-          {%- assign links = section.pages %}
-          {%- if section.anchors %}{% assign links = section.pages | concat: section.anchors %}{% endif %}
-          {%- for item in links %}
-          <li><a href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
-          {%- endfor %}
-        </ul>
-      </div>
-      {%- endfor %}
-    </nav>
+    <nav class="labrats__footer-sitemap" aria-label="Site map" data-labrats-sitemap></nav>
 
     <section class="labrats__footer-signup" aria-labelledby="footer-signup-title">
-      <h2 id="footer-signup-title">Get class and camp updates</h2>
-      <p>New sessions, camp dates, and events. A few emails a month at most.</p>
+      <div data-labrats-footer-signup></div>
       {% include projects/sdlabrats/form-newsletter.html %}
     </section>
   </div>
 
   <div class="labrats__wrap labrats__footer-base">
-    <ul class="labrats__social" aria-label="LabRats on social media">
-      {%- for profile in org.social %}
-      <li><a href="{{ profile.url }}" rel="noopener">{{ profile.name }}</a></li>
-      {%- endfor %}
-    </ul>
+    <ul class="labrats__social" aria-label="LabRats on social media" data-labrats-social></ul>
     <label class="ocs__toggle">
       <input class="ocs__toggle-input" type="checkbox" role="switch" data-labrats-theme-toggle>
       <span class="ocs__toggle-track" aria-hidden="true"></span>
       <span class="ocs__toggle-label">Dark theme</span>
     </label>
-    <p>&copy; {{ site.time | date: "%Y" }} {{ org.name }}</p>
+    <p>&copy; <span data-labrats-year></span> <span data-labrats-org="name"></span></p>
   </div>
 </footer>

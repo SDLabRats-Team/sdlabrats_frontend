@@ -10,6 +10,20 @@ $labrats-split-breakpoint: 52rem;
     padding-inline: $labrats-gutter;
   }
 
+  // Pages render once the backend answers (labrats-site.js); hold the footer in place meanwhile,
+  // and keep the phone link hidden until its number has arrived.
+  main[aria-busy="true"] {
+    min-height: 70vh;
+  }
+
+  .labrats__loading {
+    color: var(--text-muted);
+  }
+
+  &:not([data-labrats-ready]) .labrats__nav-phone {
+    visibility: hidden;
+  }
+
   .labrats__page-header {
     padding-block: 1.5rem 2.25rem;
     border-bottom: 1px solid var(--ui-border);

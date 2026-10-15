@@ -1,35 +1,15 @@
 <!DOCTYPE html>
-{%- assign org = site.data.sdlabrats -%}
-{%- if page.template == "home" -%}
-  {%- assign document_title = org.name | append: " | " | append: org.tagline -%}
-{%- else -%}
-  {%- assign document_title = page.title | append: " | " | append: org.name -%}
-{%- endif -%}
-{%- assign description = page.description | default: org.description | strip_html | normalize_whitespace -%}
-{%- assign canonical = page.url | prepend: org.url -%}
-{%- assign social_image = page.image | default: org.social_image | prepend: org.url -%}
+{%- comment -%}
+  San Diego LabRats page shell. It holds no content: labrats-site.js asks the Flask backend for
+  this address (GET /api/labrats/page?path=...) and renders the announcement, navigation, page,
+  and footer from the response. Pages with their own interface (sign-in, account, admin) put it
+  in their body; it is kept below the page heading.
+{%- endcomment -%}
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ document_title | escape }}</title>
-  <meta name="description" content="{{ description | escape }}">
-  {%- if page.template == "redirect" or page.noindex %}
-  <meta name="robots" content="noindex">
-  {%- endif %}
-  {%- if page.template == "redirect" %}
-  <meta http-equiv="refresh" content="0; url={{ page.redirect_to | relative_url }}">
-  <link rel="canonical" href="{{ page.redirect_to | prepend: org.url }}">
-  {%- else %}
-  <link rel="canonical" href="{{ canonical }}">
-  {%- endif %}
-  <meta property="og:site_name" content="{{ org.name }}">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ document_title | escape }}">
-  <meta property="og:description" content="{{ description | escape }}">
-  <meta property="og:url" content="{{ canonical }}">
-  <meta property="og:image" content="{{ social_image }}">
-  <meta name="twitter:card" content="summary_large_image">
+  <title>Loading…</title>
   <meta name="theme-color" content="#0E1B33">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ '/images/projects/sdlabrats/favicon-32.png' | relative_url }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ '/images/projects/sdlabrats/apple-touch-icon.png' | relative_url }}">
@@ -44,33 +24,17 @@
 </head>
 <body class="labrats">
   <script>try{var t=localStorage.getItem("labrats-theme");if(t==="light"||t==="dark")document.body.dataset.theme=t}catch(e){}</script>
-  {%- if page.template == "redirect" %}
-  <main id="main" class="labrats__wrap labrats__redirect">
-    <p>This page has moved to <a href="{{ page.redirect_to | relative_url }}">{{ page.redirect_title | default: page.redirect_to }}</a>.</p>
-  </main>
-  {%- else %}
   <a class="labrats__skip" href="#main">Skip to content</a>
-  {% include projects/sdlabrats/announcement.html %}
+  <div data-labrats-announcement-slot></div>
   {% include projects/sdlabrats/header.html %}
-  <main id="main" tabindex="-1">
-    {%- case page.template -%}
-      {%- when "home" -%}
-        {{ content }}
-      {%- when "program" -%}
-        {% include projects/sdlabrats/program.html %}
-      {%- when "registration" -%}
-        {% include projects/sdlabrats/registration.html %}
-      {%- when "archive" -%}
-        {% include projects/sdlabrats/archive.html %}
-      {%- else -%}
-        {% include projects/sdlabrats/page-header.html %}
-        {% include projects/sdlabrats/page-contents.html %}
-        <div class="labrats__wrap labrats__body">
-          {{ content }}
-        </div>
-    {%- endcase -%}
+  <main id="main" tabindex="-1" aria-busy="true">
+    <div class="labrats__wrap labrats__body labrats__loading">
+      <p role="status">Loading…</p>
+      <noscript><p>This site needs JavaScript to load its pages.</p></noscript>
+    </div>
+    <div class="labrats__wrap labrats__body" data-labrats-app>{{ content }}</div>
   </main>
   {% include projects/sdlabrats/footer.html %}
-  {%- endif %}
+  {% include projects/sdlabrats/form-templates.html %}
 </body>
 </html>

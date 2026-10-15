@@ -1,5 +1,0 @@
-{%- assign org = site.data.sdlabrats -%}
-<section class="labrats__section" aria-labelledby="questions-title">
-  <h2 id="questions-title">{{ include.title | default: "Questions?" }}</h2>
-  <p>Call us at <a href="{{ org.phone_href }}">{{ org.phone }}</a> or <a href="{{ '/contact/' | relative_url }}">send us a message</a>. {{ include.note }}</p>
-</section>
