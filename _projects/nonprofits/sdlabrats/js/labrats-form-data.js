@@ -2,7 +2,34 @@
 // check it before sending. No DOM access, so tests can import this file directly.
 // The Flask backend (model/labrats_inquiry.py) applies the same rules again.
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// The list of rules for each kind of field (issue #15). Each rule has a check and the
+// message shown when the check fails; rules run in order and the first failure is reported.
+export const FIELD_RULES = {
+  email: [
+    { check: (value) => value.includes("@"), message: "An email address needs an @, like name@example.com." },
+    { check: (value) => !/\s/.test(value), message: "An email address can't have spaces." },
+    // Same pattern as the backend (model/labrats_inquiry.py EMAIL_PATTERN).
+    { check: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value), message: "Please enter an email address like name@example.com." },
+  ],
+  phone: [
+    { check: (value) => value.replace(/\D/g, "").length >= 10, message: "Please enter a phone number with area code." },
+  ],
+};
+
+// The procedure: checks what was typed (value) against the rules for its kind of field (type).
+// Returns the first rule's message that fails, or "" when every rule passes.
+export function validateField(value, type) {
+  // Sequencing: clean the text first.
+  const cleaned = String(value ?? "").trim();
+  // Iteration: go through each rule for this kind of field.
+  for (const rule of FIELD_RULES[type] || []) {
+    // Selection: stop at the first rule that does not pass.
+    if (!rule.check(cleaned)) {
+      return rule.message;
+    }
+  }
+  return "";
+}
 
 // Fields that may hold several values (checkbox groups).
 const MULTI_VALUE_FIELDS = new Set(["programs"]);
@@ -65,8 +92,12 @@ export function validatePayload(kind, payload) {
       errors[field] = `Please enter your ${label}.`;
     }
   }
-  if (payload.email && !EMAIL_PATTERN.test(payload.email)) {
-    errors.email = "Please enter an email address like name@example.com.";
+  // Typed fields (email, phone) are checked against their list of rules.
+  for (const type of Object.keys(FIELD_RULES)) {
+    const message = payload[type] ? validateField(payload[type], type) : "";
+    if (message) {
+      errors[type] = message;
+    }
   }
   if (kind === "scholarship") {
     Object.assign(errors, validateScholarship(payload));
@@ -76,9 +107,6 @@ export function validatePayload(kind, payload) {
 
 function validateScholarship(payload) {
   const errors = {};
-  if (payload.phone && payload.phone.replace(/\D/g, "").length < 10) {
-    errors.phone = "Please enter a phone number with area code.";
-  }
   if (!payload.programs || payload.programs.length === 0) {
     errors.programs = "Choose at least one program.";
   }

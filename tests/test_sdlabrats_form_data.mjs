@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-const { collectPayload, validatePayload, greetingName, isKnownForm } = await import(
+const { collectPayload, validatePayload, greetingName, isKnownForm, validateField } = await import(
   "../_projects/nonprofits/sdlabrats/js/labrats-form-data.js"
 );
 
@@ -59,4 +59,26 @@ test("greeting prefers the parent's name on scholarship applications", () => {
   assert.equal(greetingName(scholarship), "Ana");
   assert.equal(greetingName({ first_name: "Sam" }), "Sam");
   assert.equal(greetingName({}), "");
+});
+
+// validateField(value, type), issue #15: each kind of field is checked against its list of rules.
+test('"hello" fails as an email and "name@example.com" passes', () => {
+  assert.equal(validateField("hello", "email"), "An email address needs an @, like name@example.com.");
+  assert.equal(validateField("name@example.com", "email"), "");
+});
+
+test("email rules run in order and report the first failure", () => {
+  assert.equal(validateField("na me@example.com", "email"), "An email address can't have spaces.");
+  assert.equal(validateField("name@example", "email"), "Please enter an email address like name@example.com.");
+  assert.equal(validateField("a@b.c@d", "email"), "Please enter an email address like name@example.com.");
+  assert.equal(validateField("  name@example.com  ", "email"), "", "outside spaces are trimmed first");
+});
+
+test("a phone number needs 10 digits", () => {
+  assert.equal(validateField("555-0100", "phone"), "Please enter a phone number with area code.");
+  assert.equal(validateField("(760) 555-0100", "phone"), "");
+});
+
+test("a kind of field with no rules always passes", () => {
+  assert.equal(validateField("anything", "message"), "");
 });

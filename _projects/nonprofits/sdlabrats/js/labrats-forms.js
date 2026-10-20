@@ -7,7 +7,7 @@ import { collectPayload, validatePayload, greetingName } from "./labrats-form-da
 const INQUIRY_ENDPOINT = `${pythonURI}/api/labrats/inquiries`;
 
 const SUCCESS_MESSAGES = {
-  contact: "Your message is in and we'll reply by email.",
+  contact: "We got your message, and we'll reply by email.",
   scholarship: "We'll email you about using your scholarship. If you don't hear from us within 2 days, please call.",
   partnership: "We'll send partnership details to your email.",
   video_topic: "Your idea is on our list for the next videos.",
