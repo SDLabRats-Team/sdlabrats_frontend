@@ -57,8 +57,8 @@ function initThemeToggle() {
   }
   if (!toggle) return;
 
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  toggle.checked = document.body.dataset.theme ? document.body.dataset.theme === "dark" : prefersDark;
+  // Dark is the default, so the switch is on unless light was chosen.
+  toggle.checked = document.body.dataset.theme !== "light";
   toggle.addEventListener("change", () => {
     const theme = toggle.checked ? "dark" : "light";
     document.body.dataset.theme = theme;

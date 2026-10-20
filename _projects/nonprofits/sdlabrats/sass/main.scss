@@ -6,6 +6,7 @@
 
 // OCS foundations: color map, design-system variables, and table mixin.
 @import "open-coding/theme/legacy/root-color-map";
+@import "open-coding/theme/legacy/user-colors";   // $background: the OCS black
 @import "open-coding/mixins/variables";
 @import "open-coding/mixins/forms";
 

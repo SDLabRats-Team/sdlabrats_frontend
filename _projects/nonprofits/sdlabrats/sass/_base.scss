@@ -1,33 +1,22 @@
 // Theme application, type scale, links, focus, and resets of OCS globals that do not
 // suit a public site (rounded images everywhere, muted body copy, input drop shadows).
 
+// Dark is the default theme; the footer toggle switches to light and remembers the choice.
 .labrats {
-  @include labrats-theme(light);
-}
-
-@media (prefers-color-scheme: dark) {
-  .labrats:not([data-theme="light"]) {
-    @include labrats-theme(dark);
-  }
-}
-
-.labrats[data-theme="dark"] {
   @include labrats-theme(dark);
+}
+
+.labrats[data-theme="light"] {
+  @include labrats-theme(light);
 }
 
 // The html element sits outside the body scope, so overscroll areas get the page color here.
 html:has(> body.labrats) {
-  background: map-get(map-get($labrats-palettes, light), bg);
-}
-
-@media (prefers-color-scheme: dark) {
-  html:has(> body.labrats:not([data-theme="light"])) {
-    background: map-get(map-get($labrats-palettes, dark), bg);
-  }
-}
-
-html:has(> body.labrats[data-theme="dark"]) {
   background: map-get(map-get($labrats-palettes, dark), bg);
+}
+
+html:has(> body.labrats[data-theme="light"]) {
+  background: map-get(map-get($labrats-palettes, light), bg);
 }
 
 body.labrats {

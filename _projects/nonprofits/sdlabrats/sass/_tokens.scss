@@ -23,7 +23,7 @@ $labrats-palettes: (
     danger: #B42318
   ),
   dark: (
-    bg: #0B1426,
+    bg: $background,        // OCS black (open-coding/theme/legacy/user-colors), as on the OCS site
     text: #E8EEF7,
     muted: #AEBBD0,
     accent: #8CC8F2,
