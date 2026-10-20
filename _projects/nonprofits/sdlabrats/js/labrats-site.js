@@ -6,6 +6,7 @@ import { apiRequest, BackendUnavailableError } from "./labrats-api.js";
 import { initForms } from "./labrats-forms.js";
 import { readStorage, writeStorage } from "./labrats-storage.js";
 import { initSessionLink } from "./labrats-auth.js";
+import { initSearch } from "./labrats-search.js";
 import { bindOrg } from "./labrats-html.js";
 import { pagePathFrom, withBaseurl } from "./labrats-content-rules.js";
 import { renderPlaceholders } from "./labrats-widgets.js";
@@ -133,6 +134,7 @@ function renderSite(bundle) {
   document.querySelector("[data-labrats-announcement-slot]").replaceChildren(renderAnnouncement(ctx) || "");
   renderHeader(document.querySelector(".labrats__header"), ctx);
   renderFooter(document.querySelector(".labrats__footer"), ctx);
+  initSearch(document.querySelector("[data-labrats-search]"), ctx);
   main.replaceChildren(...renderMain(ctx, app && app.childElementCount ? app : null).filter(Boolean));
   [main, document.querySelector(".labrats__footer")].forEach((root) => {
     renderPlaceholders(root, ctx);

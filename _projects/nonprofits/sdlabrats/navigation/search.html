@@ -1,0 +1,11 @@
+{%- comment -%} Footer search bar. labrats-search.js fills its list from the backend site map and shows the results here. {%- endcomment -%}
+<form class="labrats__search" role="search" data-labrats-search novalidate>
+  <label for="labrats-search-input">Search this site</label>
+  <div class="labrats__search-row">
+    <input class="ocs__input" id="labrats-search-input" name="q" type="search" autocomplete="off" aria-describedby="labrats-search-error">
+    <button class="ocs__btn signal fill" type="submit">Search</button>
+  </div>
+  <p class="labrats__field-error" id="labrats-search-error" role="alert" hidden></p>
+  <p class="labrats__form-status" role="status" aria-live="polite" data-labrats-search-status></p>
+  <ul class="labrats__search-results" data-labrats-search-results></ul>
+</form>

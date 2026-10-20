@@ -99,6 +99,41 @@
     }
   }
 
+  // Search bar: a full-width row above the site map, kept to a readable line length.
+  .labrats__footer-search {
+    grid-column: 1 / -1;
+  }
+
+  .labrats__search {
+    display: grid;
+    gap: 0.5rem;
+    max-width: $labrats-measure;
+
+    label {
+      font-weight: 700;
+    }
+  }
+
+  .labrats__search-row {
+    display: flex;
+    gap: 0.5rem;
+
+    .ocs__input {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .labrats__search-results {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      padding-block: 0.3rem;
+    }
+  }
+
   .labrats__footer-signup {
     grid-column: 3;
     grid-row: 1;
