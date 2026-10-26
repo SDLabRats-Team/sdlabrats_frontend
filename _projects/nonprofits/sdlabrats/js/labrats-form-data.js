@@ -53,6 +53,10 @@ export const FORM_RULES = {
       job_title: "title", email: "business email",
     },
   },
+  // Every box is optional on its own; validatePayload asks for at least one answer.
+  survey: {
+    required: {},
+  },
   scholarship: {
     required: {
       student_first_name: "student's first name", student_last_name: "student's last name",
@@ -102,6 +106,9 @@ export function validatePayload(kind, payload) {
   if (kind === "scholarship") {
     Object.assign(errors, validateScholarship(payload));
   }
+  if (kind === "survey" && !payload.liked && !payload.improvements) {
+    errors.liked = "Tell us what you liked or what we could improve.";
+  }
   return errors;
 }
 
@@ -122,6 +129,6 @@ function validateScholarship(payload) {
 
 // First name to greet the person with after a successful submission.
 export function greetingName(payload) {
-  const field = ["parent_first_name", ...NAME_FIELDS].find((name) => payload[name]);
+  const field = ["parent_first_name", ...NAME_FIELDS, "name"].find((name) => payload[name]);
   return field ? payload[field] : "";
 }

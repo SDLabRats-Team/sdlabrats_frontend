@@ -172,7 +172,7 @@ function redirectTemplate(ctx) {
 // the heading: `app` is that element from the shell, or null.
 export function renderMain(ctx, app) {
   switch (ctx.page.template) {
-    case "home": return [body(ctx)];
+    case "home": return [body(ctx), blockNode("survey_invite", ctx)];
     case "program": return programTemplate(ctx);
     case "registration": return registrationTemplate(ctx);
     case "archive": return archiveTemplate(ctx);

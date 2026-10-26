@@ -12,6 +12,7 @@ const SUCCESS_MESSAGES = {
   partnership: "We'll send partnership details to your email.",
   video_topic: "Your idea is on our list for the next videos.",
   newsletter: "You're on the list.",
+  survey: "Your answers help us make the website better.",
 };
 
 function successMessage(kind, payload) {

@@ -43,8 +43,11 @@ choices come from the backend).
 ### Backend endpoints
 
 - `GET /api/labrats/page?path=` returns `{ site, page, session, programs, sessions }`.
-- `POST /api/labrats/inquiries` stores contact, scholarship, partnership, video-topic, and
-  newsletter submissions, and emails staff when SMTP is configured.
+- `POST /api/labrats/inquiries` stores contact, scholarship, partnership, video-topic,
+  newsletter, and website survey submissions, and emails staff when SMTP is configured. The
+  survey (`/survey/`, linked by a button at the bottom of the home page) has three boxes: an
+  optional name ("Anonymous" when empty), what you liked, and what we could improve. Admins
+  read responses under Form submissions, filtered by "Website survey".
 - Admin only: `GET`/`PUT /api/labrats/sessions[/<id>]` and `GET`/`PUT /api/labrats/announcement`,
   used by the admin console's "Schedule & notice" tab.
 

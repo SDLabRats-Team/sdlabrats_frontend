@@ -1,0 +1,14 @@
+{%- comment -%}
+  Website survey: three boxes, all optional on their own. Leaving the name empty sends the
+  response as "Anonymous"; at least one of the two answers is needed (labrats-form-data.js and the
+  backend's model/labrats_inquiry.py check the same rule). Responses show in the admin console.
+{%- endcomment -%}
+<form class="labrats__form" data-labrats-form="survey" novalidate>
+  <div class="labrats__form-grid">
+    {% include projects/sdlabrats/field.html form="survey" name="name" label="Your name" autocomplete="name" hint="Optional. Leave it empty to stay anonymous." wide=true %}
+    {% include projects/sdlabrats/field.html form="survey" name="liked" label="What did you like about the website?" type="textarea" rows=3 wide=true %}
+    {% include projects/sdlabrats/field.html form="survey" name="improvements" label="What could we improve?" type="textarea" rows=3 wide=true %}
+  </div>
+  {% include projects/sdlabrats/form-parts.html part="trap" form="survey" %}
+  {% include projects/sdlabrats/form-parts.html part="submit" label="Send survey" %}
+</form>
