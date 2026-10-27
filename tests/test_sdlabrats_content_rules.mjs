@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 const {
-  pagePathFrom, withBaseurl, lookup, fillTemplate, documentTitle, sectionFor,
+  pagePathFrom, withBaseurl, lookup, fillTemplate, documentTitle, sectionFor, activeNavItem,
   openSessions, closedSessions, sessionDates, programsFor, showAnnouncement,
 } = await import("../_projects/nonprofits/sdlabrats/js/labrats-content-rules.js");
 
@@ -71,4 +71,26 @@ test("the notice hides on the page it links to, or when turned off", () => {
   assert.equal(showAnnouncement(notice, "/camps/"), false);
   assert.equal(showAnnouncement({ ...notice, show: false }, "/"), false);
   assert.equal(showAnnouncement(null, "/"), false);
+});
+
+// The top menu from _config.yml (sdlabrats.nav), as the header passes it in.
+const nav = [
+  { url: "/programs/", section: "programs" }, { url: "/schedule/", section: "schedule" },
+  { url: "/scholarships/" }, { url: "/about-us/", section: "about" }, { url: "/enroll/" },
+];
+
+test("the menu marks the page itself first", () => {
+  assert.deepEqual(activeNavItem(nav, { path: "/enroll/" }), { url: "/enroll/", current: "page" });
+  assert.deepEqual(activeNavItem(nav, { path: "/scholarships/", section: "about" }), { url: "/scholarships/", current: "page" });
+});
+
+test("pages inside a section mark that section's item", () => {
+  assert.deepEqual(activeNavItem(nav, { path: "/camps/", section: "programs" }), { url: "/programs/", current: "true" });
+  assert.deepEqual(activeNavItem(nav, { path: "/fall-camp-k-3/", section: "schedule", parent: "/schedule/" }), { url: "/schedule/", current: "true" });
+  assert.deepEqual(activeNavItem(nav, { path: "/why-learn-science/", section: "about" }), { url: "/about-us/", current: "true" });
+});
+
+test("footer-only pages mark nothing in the menu", () => {
+  assert.equal(activeNavItem(nav, { path: "/contact/", section: "give" }), null);
+  assert.equal(activeNavItem(nav, { path: "/" }), null);
 });

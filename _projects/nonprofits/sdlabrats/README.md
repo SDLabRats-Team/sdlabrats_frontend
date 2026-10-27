@@ -54,6 +54,17 @@ choices come from the backend).
 Payments and registration stay on Donorbox. A session's `donorbox_campaign` (in the backend) picks
 the embedded form; it shows only while the session is open.
 
+### Top menu
+
+The top menu follows the OCS pattern for site navigation: like `minima.nav_pages`, it is a list
+in `_config.yml`, under `sdlabrats.nav`, rendered by `navigation/header.html` with Liquid. Because
+it is built into every page, the menu shows even when the backend is unreachable. Issue #3 sets
+the five items: Programs, Schedule & Pricing, Support (`/scholarships/`), About, and Enroll
+(`/enroll/`, the open sessions, drawn as the `ocs__btn signal fill` button). Donate & Contact and
+the phone number live in the footer. `labrats-site.js` marks the current item: the item for the
+page itself, else its parent page, else its `section` (`activeNavItem()` in
+`labrats-content-rules.js`). Below 60rem the menu folds behind the Menu button.
+
 ## Page templates
 
 Each backend page record has a `template`:

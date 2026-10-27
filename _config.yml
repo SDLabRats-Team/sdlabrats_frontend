@@ -135,3 +135,16 @@ minima:
     - navigation/courses.md
     - navigation/capstone.md
     - navigation/search.md
+
+# San Diego LabRats top menu (_projects/nonprofits/sdlabrats/navigation/header.html).
+# Like minima's nav_pages above, this list is the menu in display order. Each item is a
+# page address on the LabRats site; `section` is the backend section a page belongs to, so
+# pages inside it light up the item; `enroll: true` draws the item as the signal button.
+# Page content stays in the Flask backend; only the menu lives here.
+sdlabrats:
+  nav:
+    - { title: "Programs", url: "/programs/", section: "programs" }
+    - { title: "Schedule & Pricing", url: "/schedule/", section: "schedule" }
+    - { title: "Support", url: "/scholarships/" }
+    - { title: "About", url: "/about-us/", section: "about" }
+    - { title: "Enroll", url: "/enroll/", enroll: true }
