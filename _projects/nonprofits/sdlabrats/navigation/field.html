@@ -1,6 +1,7 @@
 {%- comment -%}
   One labeled form control.
-  Params: form, name, label, type (text|email|tel|textarea), required, autocomplete, hint, wide.
+  Params: form, name, label, type (text|email|tel|textarea), required, autocomplete, hint, wide,
+  rows (textarea height, default 5).
   The error paragraph is filled in by labrats-forms.js.
 {%- endcomment -%}
 {%- assign field_id = include.form | append: "-" | append: include.name -%}
@@ -11,7 +12,7 @@
   <p class="labrats__hint" id="{{ field_id }}-hint">{{ include.hint }}</p>
   {%- endif %}
   {%- if include.type == "textarea" %}
-  <textarea class="ocs__input" id="{{ field_id }}" name="{{ include.name }}" rows="5" maxlength="2000" aria-describedby="{{ described_by }}"{% if include.required %} required{% endif %}></textarea>
+  <textarea class="ocs__input" id="{{ field_id }}" name="{{ include.name }}" rows="{{ include.rows | default: 5 }}" maxlength="2000" aria-describedby="{{ described_by }}"{% if include.required %} required{% endif %}></textarea>
   {%- else %}
   <input class="ocs__input" id="{{ field_id }}" name="{{ include.name }}" type="{{ include.type | default: 'text' }}" maxlength="200"{% if include.autocomplete %} autocomplete="{{ include.autocomplete }}"{% endif %} aria-describedby="{{ described_by }}"{% if include.required %} required{% endif %}>
   {%- endif %}

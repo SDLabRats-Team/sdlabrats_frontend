@@ -209,8 +209,8 @@ async function loadSubmissions() {
   root.querySelector("[data-admin-submissions]").replaceChildren(result.data.length
     ? table("Website form submissions", ["Received", "Form", "Name", "Email", "Phone", "Details", "Status"], result.data.map((inquiry) => [
       formatDateTime(inquiry.created_at), inquiry.form.replace("_", " "),
-      `${inquiry.first_name} ${inquiry.last_name}`,
-      el("a", { href: `mailto:${inquiry.email}` }, inquiry.email),
+      `${inquiry.first_name} ${inquiry.last_name}`.trim(),
+      inquiry.email ? el("a", { href: `mailto:${inquiry.email}` }, inquiry.email) : "",
       inquiry.phone || "",
       el("span", { class: "labrats__details" }, summarizeDetails(inquiry.details)),
       statusButton(inquiry),

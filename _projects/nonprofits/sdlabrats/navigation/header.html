@@ -1,4 +1,7 @@
-{%- comment -%} Header skeleton. labrats-site.js fills the section links and phone number from the backend. {%- endcomment -%}
+{%- comment -%}
+  Site header. The top menu comes from `sdlabrats.nav` in _config.yml (the OCS nav_pages pattern),
+  so it is built into every page. labrats-site.js marks the current item once the page loads.
+{%- endcomment -%}
 <header class="labrats__header">
   <div class="labrats__wrap labrats__header-row">
     <a class="labrats__brand" href="{{ '/' | relative_url }}">
@@ -12,8 +15,11 @@
     </button>
 
     <nav class="labrats__nav" id="labrats-nav" aria-label="Main">
-      <ul data-labrats-sections></ul>
-      <a class="labrats__nav-phone" data-labrats-org-href="{phone_href}">Call <span data-labrats-org="phone"></span></a>
+      <ul>
+        {%- for item in site.sdlabrats.nav %}
+        <li><a href="{{ item.url | relative_url }}" data-labrats-nav="{{ item.url }}"{% if item.section %} data-labrats-nav-section="{{ item.section }}"{% endif %}{% if item.enroll %} class="ocs__btn signal fill labrats__nav-enroll"{% endif %}>{{ item.title }}</a></li>
+        {%- endfor %}
+      </ul>
       <a class="labrats__nav-signin" data-labrats-session-link href="{{ '/sign-in/' | relative_url }}">Sign in</a>
     </nav>
   </div>

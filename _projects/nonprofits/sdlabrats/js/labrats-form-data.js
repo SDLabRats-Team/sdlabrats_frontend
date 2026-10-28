@@ -71,6 +71,16 @@ export const FORM_RULES = {
     },
   },
 
+  survey: {
+    required: {
+      first_name: "first name",
+      last_name: "last name",
+      email: "email",
+      program: "program",
+      rating: "rating",
+    },
+  },
+
   scholarship: {
     required: {
       student_first_name: "student's first name",
@@ -81,17 +91,6 @@ export const FORM_RULES = {
       parent_last_name: "parent's last name",
       email: "email",
       phone: "phone",
-    },
-  },
-
-  // New SD Lab Rats feedback survey.
-  survey: {
-    required: {
-      first_name: "first name",
-      last_name: "last name",
-      email: "email",
-      program: "program",
-      rating: "rating",
     },
   },
 };
@@ -195,7 +194,7 @@ function validateScholarship(payload) {
 
 // First name to greet the person with after a successful submission.
 export function greetingName(payload) {
-  const field = ["parent_first_name", ...NAME_FIELDS].find(
+  const field = ["parent_first_name", ...NAME_FIELDS, "name"].find(
     (name) => payload[name]
   );
 

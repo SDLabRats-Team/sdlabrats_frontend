@@ -51,8 +51,8 @@ test("scholarship needs a program and a full phone number", () => {
 });
 
 test("unknown forms are a programming error", () => {
-  assert.equal(isKnownForm("survey"), false);
-  assert.throws(() => validatePayload("survey", {}), /Unknown LabRats form/);
+  assert.equal(isKnownForm("pottery_class"), false);
+  assert.throws(() => validatePayload("pottery_class", {}), /Unknown LabRats form/);
 });
 
 test("greeting prefers the parent's name on scholarship applications", () => {
@@ -81,4 +81,15 @@ test("a phone number needs 10 digits", () => {
 
 test("a kind of field with no rules always passes", () => {
   assert.equal(validateField("anything", "message"), "");
+});
+
+// Website survey: three boxes, name optional, at least one answer.
+test("an empty survey asks for at least one answer", () => {
+  assert.deepEqual(validatePayload("survey", { name: "Ana" }), { liked: "Tell us what you liked or what we could improve." });
+});
+
+test("a survey with one answer and no name is valid", () => {
+  assert.deepEqual(validatePayload("survey", { improvements: "Bigger photos" }), {});
+  assert.equal(greetingName({ name: "Ana", liked: "Menus" }), "Ana");
+  assert.equal(greetingName({ liked: "Menus" }), "");
 });

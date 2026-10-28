@@ -1,8 +1,12 @@
 // Announcement bar, site header with the main nav, section tabs, and the "On this page" bar.
 
-// The full nav (sections, phone, and the account link) needs the whole page width, so it
-// folds behind the Menu button until the wrap reaches its maximum.
-$labrats-nav-breakpoint: $labrats-wrap;
+// The five menu items from _config.yml plus Sign in fit on one row from 60rem (960px) up,
+// so tablets in landscape keep the full menu; narrower screens use the Menu button.
+$labrats-nav-breakpoint: 60rem;
+
+// Enroll's button edge and its "current page" ring, shared by the desktop row and the phone panel.
+$labrats-nav-enroll-border: 1px solid var(--labrats-signal);
+$labrats-nav-enroll-current: 0 0 0 2px var(--pref-bg-color), 0 0 0 4px var(--labrats-signal);
 
 .labrats {
   .labrats__announcement {
@@ -104,6 +108,7 @@ $labrats-nav-breakpoint: $labrats-wrap;
 
     ul {
       display: flex;
+      align-items: center;
       gap: 1.25rem;
       margin: 0;
       padding: 0;
@@ -126,11 +131,17 @@ $labrats-nav-breakpoint: $labrats-wrap;
         border-bottom-color: var(--labrats-signal);
       }
     }
-  }
 
-  .labrats__nav-phone {
-    color: var(--pref-text-color);
-    font-size: 0.9375rem;
+    // Enroll is the one item drawn as the OCS signal button (issue #3: strongest emphasis),
+    // so it keeps the button's padding and border instead of the link underline.
+    ul a.labrats__nav-enroll {
+      padding: 0.55rem 1.1rem;
+      border: $labrats-nav-enroll-border;
+
+      &[aria-current] {
+        box-shadow: $labrats-nav-enroll-current;
+      }
+    }
   }
 
   .labrats__menu-toggle {
@@ -177,6 +188,7 @@ $labrats-nav-breakpoint: $labrats-wrap;
 
       ul {
         flex-direction: column;
+        align-items: stretch;
         gap: 0;
       }
 
@@ -192,9 +204,20 @@ $labrats-nav-breakpoint: $labrats-wrap;
           padding-left: 0.85rem;
         }
       }
+
+      ul a.labrats__nav-enroll {
+        margin-top: 0.75rem;
+        padding: 0.85rem 1rem;
+        border: $labrats-nav-enroll-border;
+        text-align: center;
+
+        &[aria-current] {
+          padding-left: 1rem;
+          box-shadow: $labrats-nav-enroll-current;
+        }
+      }
     }
 
-    .labrats__nav-phone,
     .labrats__nav-signin {
       padding-block: 0.85rem;
       font-size: 1.125rem;

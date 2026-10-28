@@ -2,7 +2,7 @@
 // The layout (_layouts/sdlabrats.html) is an empty shell; nothing here is stored in the frontend.
 import { el } from "./labrats-dom.js";
 import { htmlFragment } from "./labrats-html.js";
-import { documentTitle, sectionFor, showAnnouncement } from "./labrats-content-rules.js";
+import { activeNavItem, documentTitle, sectionFor, showAnnouncement } from "./labrats-content-rules.js";
 import { blockNode, campDays, donorbox, sessionList, sessionTable } from "./labrats-widgets.js";
 
 const ACCOUNT_PATHS = ["/sign-in/", "/account/", "/admin/"];
@@ -41,14 +41,15 @@ export function renderAnnouncement(ctx) {
         el("span", { "aria-hidden": "true" }, "×"))));
 }
 
-// Fills the header skeleton: section links, the current-page markers, and the phone link.
+// Marks the current page in the header. The menu itself is built from _config.yml (header.html).
 export function renderHeader(header, ctx) {
-  const { page, site } = ctx;
-  header.querySelector("[data-labrats-sections]").replaceChildren(...site.sections.map((section) => el("li", {},
-    el("a", {
-      href: ctx.url(section.url),
-      "aria-current": page.section === section.id ? (page.path === section.url ? "page" : "true") : undefined,
-    }, section.title))));
+  const { page } = ctx;
+  const links = [...header.querySelectorAll("[data-labrats-nav]")];
+  const active = activeNavItem(links.map((link) => ({ url: link.dataset.labratsNav, section: link.dataset.labratsNavSection })), page);
+  links.forEach((link) => {
+    if (active && link.dataset.labratsNav === active.url) link.setAttribute("aria-current", active.current);
+    else link.removeAttribute("aria-current");
+  });
   const brand = header.querySelector(".labrats__brand");
   if (page.path === "/") brand.setAttribute("aria-current", "page");
   const signin = header.querySelector("[data-labrats-session-link]");
@@ -172,7 +173,7 @@ function redirectTemplate(ctx) {
 // the heading: `app` is that element from the shell, or null.
 export function renderMain(ctx, app) {
   switch (ctx.page.template) {
-    case "home": return [body(ctx)];
+    case "home": return [body(ctx), blockNode("survey_invite", ctx)];
     case "program": return programTemplate(ctx);
     case "registration": return registrationTemplate(ctx);
     case "archive": return archiveTemplate(ctx);

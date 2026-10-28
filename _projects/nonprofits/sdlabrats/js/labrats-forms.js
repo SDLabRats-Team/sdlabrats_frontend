@@ -1,8 +1,8 @@
 
-// Sends LabRats forms (contact, scholarship, partnership, video topics,
-// newsletter, survey) to the Flask backend and shows field errors and
-// a status line. Markup comes from the form-*.html includes;
-// rules live in labrats-form-data.js.
+ // Sends LabRats forms (contact, scholarship, partnership, video topics,
+ // newsletter, survey) to the Flask backend and shows field errors and
+ // a status line. Markup comes from the form-*.html includes;
+ // rules live in labrats-form-data.js.
 
 import { pythonURI, fetchOptions } from "../../api/config.js";
 import { collectPayload, validatePayload, greetingName } from "./labrats-form-data.js";
@@ -66,6 +66,7 @@ async function submitForm(form) {
       focusFirstError(form);
       return;
     }
+
     if (!response.ok) {
       throw new Error(`Inquiry request failed with status ${response.status}`);
     }

@@ -31,6 +31,17 @@ export function documentTitle(page, org) {
   return page.template === "home" ? `${org.name} | ${org.tagline}` : `${page.title} | ${org.name}`;
 }
 
+// Which top menu item to mark for this page: { url, current } or null. An item for the page
+// itself wins ("page"); then its parent page, then its section ("true", meaning "you are inside it").
+// items: [{ url, section }] from the header (sdlabrats.nav in _config.yml).
+export function activeNavItem(items, page) {
+  const exact = items.find((item) => item.url === page.path);
+  if (exact) return { url: exact.url, current: "page" };
+  const inside = items.find((item) => item.url === page.parent)
+    || items.find((item) => item.section && item.section === page.section);
+  return inside ? { url: inside.url, current: "true" } : null;
+}
+
 // The section a page belongs to, and which of its tabs to highlight. A child page that is not
 // listed (a monthly registration page) highlights its `parent` tab.
 export function sectionFor(page, sections) {

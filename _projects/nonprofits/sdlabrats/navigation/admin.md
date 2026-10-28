@@ -60,7 +60,7 @@ scripts: [labrats-admin.js]
 
     <section class="labrats__console-panel" role="tabpanel" id="panel-submissions" aria-labelledby="tab-submissions" hidden>
       <h2>Form submissions</h2>
-      <p>Everything sent through the website's contact, scholarship, partnership, video-idea, and newsletter forms. Mark a submission handled once someone has replied.</p>
+      <p>Everything sent through the website's contact, scholarship, partnership, video-idea, and newsletter forms, plus the website survey. Mark a submission handled once someone has replied.</p>
       <div class="labrats__console-filters">
         <div class="labrats__field">
           <label for="submission-form">Form</label>
@@ -71,6 +71,7 @@ scripts: [labrats-admin.js]
             <option value="partnership">Partnership</option>
             <option value="video_topic">Video idea</option>
             <option value="newsletter">Newsletter</option>
+            <option value="survey">Website survey</option>
           </select>
         </div>
         <div class="labrats__field">
