@@ -1,6 +1,9 @@
-// Sends LabRats forms (contact, scholarship, partnership, video topics, newsletter) to
-// the Flask backend and shows field errors and a status line. Markup comes from the
-// form-*.html includes; rules live in labrats-form-data.js.
+
+// Sends LabRats forms (contact, scholarship, partnership, video topics,
+// newsletter, survey) to the Flask backend and shows field errors and
+// a status line. Markup comes from the form-*.html includes;
+// rules live in labrats-form-data.js.
+
 import { pythonURI, fetchOptions } from "../../api/config.js";
 import { collectPayload, validatePayload, greetingName } from "./labrats-form-data.js";
 
@@ -12,6 +15,7 @@ const SUCCESS_MESSAGES = {
   partnership: "We'll send partnership details to your email.",
   video_topic: "Your idea is on our list for the next videos.",
   newsletter: "You're on the list.",
+  survey: "Your feedback has been submitted successfully.",
 };
 
 function successMessage(kind, payload) {
@@ -70,12 +74,17 @@ async function submitForm(form) {
       window.location.assign(form.dataset.successUrl);
       return;
     }
+
     form.reset();
     setStatus(form, "success", successMessage(kind, payload));
   } catch (error) {
     console.error("LabRats form could not be sent:", error);
     const phone = form.querySelector("[data-labrats-phone]")?.dataset.labratsPhone || "";
-    setStatus(form, "error", `We couldn't send this right now. Please try again or call ${phone}.`.trim());
+    setStatus(
+      form,
+      "error",
+      `We couldn't send this right now. Please try again or call ${phone}.`.trim()
+    );
   } finally {
     button.disabled = false;
     button.removeAttribute("aria-busy");
@@ -87,19 +96,25 @@ export function showErrors(form, errors) {
     element.hidden = true;
     element.textContent = "";
   });
-  form.querySelectorAll("[aria-invalid]").forEach((element) => element.removeAttribute("aria-invalid"));
+
+  form.querySelectorAll("[aria-invalid]").forEach((element) =>
+    element.removeAttribute("aria-invalid")
+  );
 
   for (const [field, message] of Object.entries(errors)) {
     const target = GROUP_ERRORS[field]
       ? form.querySelector(`[data-labrats-group="${GROUP_ERRORS[field]}"]`)
       : form.querySelector(`[name="${field}"]`);
+
     if (!target) continue;
 
     target.setAttribute("aria-invalid", "true");
+
     const describedBy = (target.getAttribute("aria-describedby") || "").split(" ");
     const errorElement = describedBy
       .map((id) => id && form.querySelector(`#${CSS.escape(id)}`))
       .find((element) => element && element.classList.contains("labrats__field-error"));
+
     if (errorElement) {
       errorElement.textContent = message;
       errorElement.hidden = false;
@@ -110,7 +125,11 @@ export function showErrors(form, errors) {
 export function focusFirstError(form) {
   const invalid = form.querySelector('[aria-invalid="true"]');
   if (!invalid) return;
-  const focusable = invalid.matches("fieldset") ? invalid.querySelector("input") : invalid;
+
+  const focusable = invalid.matches("fieldset")
+    ? invalid.querySelector("input")
+    : invalid;
+
   focusable?.focus();
 }
 

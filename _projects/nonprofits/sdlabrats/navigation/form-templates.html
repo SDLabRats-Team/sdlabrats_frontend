@@ -1,9 +1,12 @@
+
 {%- comment -%}
   Form markup for page bodies from the backend. A body marks where a form goes with
   data-labrats-form-slot="contact"; labrats-site.js copies the matching template there and fills
   its choices from the backend. The newsletter form lives in the footer.
 {%- endcomment -%}
+
 <template id="labrats-form-contact">{% include projects/sdlabrats/form-contact.html %}</template>
 <template id="labrats-form-partnership">{% include projects/sdlabrats/form-partnership.html %}</template>
 <template id="labrats-form-scholarship">{% include projects/sdlabrats/form-scholarship.html %}</template>
 <template id="labrats-form-video-topic">{% include projects/sdlabrats/form-video-topic.html %}</template>
+<template id="labrats-form-survey">{% include projects/sdlabrats/form-survey.html %}</template>
