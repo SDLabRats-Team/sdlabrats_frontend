@@ -1,14 +1,61 @@
-{%- comment -%}
-  Website survey: three boxes, all optional on their own. Leaving the name empty sends the
-  response as "Anonymous"; at least one of the two answers is needed (labrats-form-data.js and the
-  backend's model/labrats_inquiry.py check the same rule). Responses show in the admin console.
-{%- endcomment -%}
+
 <form class="labrats__form" data-labrats-form="survey" novalidate>
   <div class="labrats__form-grid">
-    {% include projects/sdlabrats/field.html form="survey" name="name" label="Your name" autocomplete="name" hint="Optional. Leave it empty to stay anonymous." wide=true %}
-    {% include projects/sdlabrats/field.html form="survey" name="liked" label="What did you like about the website?" type="textarea" rows=3 wide=true %}
-    {% include projects/sdlabrats/field.html form="survey" name="improvements" label="What could we improve?" type="textarea" rows=3 wide=true %}
+
+    {% include projects/sdlabrats/form-parts.html part="name" form="survey" %}
+
+    {% include projects/sdlabrats/field.html form="survey" name="email" label="Email" type="email" required=true autocomplete="email" wide=true %}
+
+    <div class="labrats__field labrats__field--wide">
+      <label for="survey-program">
+        Which program interests you?
+        <span class="labrats__required">required</span>
+      </label>
+
+      <select
+        class="ocs__input"
+        id="survey-program"
+        name="program"
+        required
+        aria-describedby="survey-program-error"
+      >
+        <option value="">Choose a program</option>
+        <option value="After-School STEM">After-School STEM</option>
+        <option value="Summer Camps">Summer Camps</option>
+        <option value="Workshops">Workshops</option>
+      </select>
+
+      <p class="labrats__field-error" id="survey-program-error" hidden></p>
+    </div>
+
+    <div class="labrats__field labrats__field--wide">
+      <label for="survey-rating">
+        How useful is our website?
+        <span class="labrats__required">required</span>
+      </label>
+
+      <select
+        class="ocs__input"
+        id="survey-rating"
+        name="rating"
+        required
+        aria-describedby="survey-rating-error"
+      >
+        <option value="">Choose a rating</option>
+        <option value="5">5 - Very useful</option>
+        <option value="4">4 - Useful</option>
+        <option value="3">3 - Neutral</option>
+        <option value="2">2 - Needs improvement</option>
+        <option value="1">1 - Not useful</option>
+      </select>
+
+      <p class="labrats__field-error" id="survey-rating-error" hidden></p>
+    </div>
+
+    {% include projects/sdlabrats/field.html form="survey" name="message" label="What should we improve?" type="textarea" wide=true %}
+
   </div>
+
   {% include projects/sdlabrats/form-parts.html part="trap" form="survey" %}
-  {% include projects/sdlabrats/form-parts.html part="submit" label="Send survey" %}
+  {% include projects/sdlabrats/form-parts.html part="submit" label="Submit feedback" %}
 </form>
