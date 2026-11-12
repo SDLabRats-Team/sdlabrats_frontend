@@ -126,7 +126,7 @@ Sign-in needs the backend's cookie to reach the browser:
   `http://localhost:4500/sign-in/` (or `127.0.0.1`). `config.js` calls the backend on the
   page's own host, so the backend's `SameSite=Lax` cookie stays same-site.
 - Deployed: the site is `sdlabrats.opencodingsociety.com` and `config.js` points to
-  `sdlabrats-api.opencodingsociety.com`, which runs this backend in Docker on port 8429, set in the backend's
+  `sdlabrats-api.opencodingsociety.com`, which runs this backend in Docker on port 8629, set in the backend's
   `docker-compose.yml` (`nginx_sdlabrats_api.conf` in the backend repo). Its CORS `allowed_origins` already covers
   every `opencodingsociety.com` subdomain.
 
