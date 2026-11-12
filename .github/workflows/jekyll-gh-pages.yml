@@ -93,8 +93,8 @@ jobs:
           OWNER=$(echo "$REPO" | cut -d'/' -f1)
           NAME=$(echo "$REPO" | cut -d'/' -f2)
 
-          # A custom domain (CNAME file) serves the site from the root.
-          if [[ -f CNAME ]]; then
+          # The team repo serves from its custom domain (see CNAME), so it builds at the root.
+          if [[ "$REPO" == "SDLabRats-Team/sdlabrats_frontend" ]]; then
             BASEURL=""
           elif [[ "$NAME" == "$OWNER.github.io" ]]; then
             BASEURL=""
