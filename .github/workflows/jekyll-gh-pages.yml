@@ -93,7 +93,10 @@ jobs:
           OWNER=$(echo "$REPO" | cut -d'/' -f1)
           NAME=$(echo "$REPO" | cut -d'/' -f2)
 
-          if [[ "$NAME" == "$OWNER.github.io" ]]; then
+          # A custom domain (CNAME file) serves the site from the root.
+          if [[ -f CNAME ]]; then
+            BASEURL=""
+          elif [[ "$NAME" == "$OWNER.github.io" ]]; then
             BASEURL=""
           elif [[ "${{ github.repository }}" = "Open-Coding-Society/pages" ]]; then
             BASEURL=""

@@ -11,7 +11,7 @@ if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
     // so a mismatch drops the backend's SameSite=Lax sign-in cookie and /api/id returns 401.
     pythonURI = `http://${location.hostname}:8587`;
 } else {
-    pythonURI = "https://flask.opencodingsociety.com";
+    pythonURI = "https://sdlabrats-api.opencodingsociety.com";
 
 }
 
