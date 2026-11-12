@@ -122,12 +122,12 @@ ask `/api/id` when someone might be signed in; families who never sign in make n
 
 Sign-in needs the backend's cookie to reach the browser:
 
-- Local: run the backend on 8429 (`python main.py`; the same port as the class server) and the site with `make`; sign in at
+- Local: run the backend on 8587 (`python main.py`) and the site with `make`; sign in at
   `http://localhost:4500/sign-in/` (or `127.0.0.1`). `config.js` calls the backend on the
   page's own host, so the backend's `SameSite=Lax` cookie stays same-site.
 - Deployed: the site is `sdlabrats.opencodingsociety.com` and `config.js` points to
-  `sdlabrats-api.opencodingsociety.com`, which runs this backend in Docker on port 8429
-  (`nginx_sdlabrats_api.conf` in the backend repo). Its CORS `allowed_origins` already covers
+  `sdlabrats-api.opencodingsociety.com`, which runs this backend in Docker on port 8429, set in the backend's
+  `docker-compose.yml` (`nginx_sdlabrats_api.conf` in the backend repo). Its CORS `allowed_origins` already covers
   every `opencodingsociety.com` subdomain.
 
 App pages (sign-in, account, admin) keep their interface in their `.md` body and load extra
